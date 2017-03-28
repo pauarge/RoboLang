@@ -1,6 +1,7 @@
 tokens {
     LIST_INSTRUCTIONS;
     FUNCTION;
+    PARAMS;
 }
 
 prog        :   list_instr -> ^(LIST_INSTRUCTIONS list_instr);
@@ -8,11 +9,20 @@ prog        :   list_instr -> ^(LIST_INSTRUCTIONS list_instr);
 list_instr  :   (instr ';'!)+ ;
 
 instr       :   while
-            |   for
             |   if
             |   assign
             |   func
             ;
+            
+assign      :   VAR ASSIGN^ expr;            
+
+cond        :   if elseif else? -> ^(COND if elseif else?);            
+
+if          :   IF^ '('! expr ')'! '{'! list_instr '}'! ;
+
+elseif      :   (ELIF^ '('! expr ')'! '{'! list_instr '}'!)* ;
+
+else        :   ELSE^ '{'! list_instr '}'! ;
             
 while       :   WHILE^ '('! expr ')'! '{'! list_instr '}'! ;
 
@@ -34,7 +44,7 @@ atom        :   VAR
             |   '$'^ VAR
             ;
 
-funcall     :   VAR '(' expr_list ')' -> ^(FUNCTION VAR ^(e));
+funcall     :   VAR '(' expr_list ')' -> ^(FUNCTION VAR ^(PARAMS expr_list));
 expr_list   :   expr (','! expr)* ;
 
 
