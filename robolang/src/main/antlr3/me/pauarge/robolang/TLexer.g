@@ -28,53 +28,60 @@ options {
 // This is just a simple lexer that matches the usual suspects
 //
 
-KEYSER : 'Keyser' ;
-SOZE   : 'Soze' ;
+WHILE   :   'while';
+FOR     :   'for';
+IF      :   'if';
+ELIF    :   'elif';
+ELSE    :   'else';
+AND     :   'and';
+OR      :   'or';
+NOT     :   'not';
+GT      :   '>';
+LT      :   '<';
+GET     :   '>=';
+LET     :   '<=';
+EQ      :   '==';
+ASSIGN  :   '=';
+ADD     :   '+';
+SUB     :   '-';
+TIMES   :   '*';
+DIV     :   '/';
+MOD     :   '%';
+VAR     :   ('a'..'z''A'..'Z')+ ('0'..'9''a'..'z''A'..'Z')*;
+DEF     :   'def';
+NUM     :   ('0'..'9')+ ('.' ('0'..'9')+)?;
+FRONT   :   'move_front';
+BACK    :   'move_back';
+ROTATE  :   'rotate';
+RETURN  :   'return';
+PRINT   :   'print';
+LPAR    :   '(';
+RPAR    :   ')';
+SMICLN  :   ';';
+DOLLAR  :   '$';
+COMMA   :   ',';
+LBRA    :   '{';
+RBRA    :   '}';
 
-ADD : '+' ;
-SEMI: ';' ;
+// C-style comments
+COMMENT	: '//' ~('\n'|'\r')* '\r'? '\n' {$channel=HIDDEN;}
+    	| '/*' ( options {greedy=false;} : . )* '*/' {$channel=HIDDEN;}
+    	;
 
-ID  :	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_')*
-    ;
-
-INT :	'0'..'9'+
-    ;
-
-COMMENT
-    :   '//' ~('\n'|'\r')* '\r'? '\n' {skip();}
-    |   '/*' ( options {greedy=false;} : . )* '*/' {skip();}
-    ;
-
-WS  :   ( ' '
-        | '\t'
-        | '\r'
-        | '\n'
-        ) {skip();}
-    ;
-
-STRING
-    :  '"' ( ESC_SEQ | ~('\\'|'"') )* '"'
-    ;
-
-fragment
-HEX_DIGIT : ('0'..'9'|'a'..'f'|'A'..'F') ;
+// Strings (in quotes) with escape sequences
+STRING  :  '"' ( ESC_SEQ | ~('\\'|'"') )* '"'
+        ;
 
 fragment
 ESC_SEQ
     :   '\\' ('b'|'t'|'n'|'f'|'r'|'\"'|'\''|'\\')
-    |   UNICODE_ESC
-    |   OCTAL_ESC
     ;
 
-fragment
-OCTAL_ESC
-    :   '\\' ('0'..'3') ('0'..'7') ('0'..'7')
-    |   '\\' ('0'..'7') ('0'..'7')
-    |   '\\' ('0'..'7')
-    ;
-
-fragment
-UNICODE_ESC
-    :   '\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
-    ;
+// White spaces
+WS  	: ( ' '
+        | '\t'
+        | '\r'
+        | '\n'
+        ) {$channel=HIDDEN;}
+    	;
 

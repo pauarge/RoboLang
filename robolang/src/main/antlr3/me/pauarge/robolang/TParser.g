@@ -26,16 +26,12 @@ options {
     tokenVocab = TLexer;
 }
 
-// Import a grammar file, even though it does not really need it in this
-// simle demo parser. We do the import to show where imported grammars should be
-// stored for maven builds.
-//
-import Ruleb;
-
 // Some imaginary tokens for tree rewrites
 //
 tokens {
-    SCRIPT;
+    LIST_INSTRUCTIONS;
+    FUNCTION;
+    PARAMS;
 }
 
 // What package should the generated source exist in?
@@ -45,30 +41,45 @@ tokens {
     package me.pauarge.robolang;
 }
 
+prog        :   list_instr -> ^(LIST_INSTRUCTIONS list_instr);
 
+list_instr  :   (instr SMICLN!)+ ;
 
+instr       :   while
+            |   if
+            |   assign
+            //|   func
+            ;
 
-// This is just a simple parser for demo purpose
-//
-a  : b* EOF
+assign      :   VAR ASSIGN^ expr;
 
-      -> ^(SCRIPT b*)
-   ;
+//cond        :   if elseif else? -> ^(COND if elseif else?);
 
+if          :   IF^ LPAR! expr RPAR! LBRA! list_instr RBRA! ;
 
+elseif      :   (ELIF^ LPAR! expr RPAR! LBRA! list_instr RBRA!)* ;
 
-keyser
-   : KEYSER^ SOZE
-   ;
+else        :   ELSE^ LBRA! list_instr RBRA! ;
 
-expression
-   : addExpr (ADD^ addExpr)*
-   ;
+while       :   WHILE^ LPAR! expr RPAR! LBRA! list_instr RBRA! ;
 
-addExpr
-   : ID
-   | INT
-   | STRING
-   ;
+expr        :   boolterm (OR^ boolterm)* ;
 
+boolterm    :   boolfact (AND^ boolfact)* ;
 
+boolfact    :   num_expr ((EQUAL^ | NOT_EQUAL^ | LT^ | LE^ | GT^ | GE^) num_expr)? ;
+
+num_expr    :   term ( (ADD^ | SUB^) term)* ;
+
+term        :   factor ( (TIMES^ | DIV^ | MOD^) factor)* ;
+
+factor      :   (ADD^ | SUB^)? atom ;
+
+atom        :   VAR
+            |   funcall
+            |   NUM
+            |   DOLLAR^ VAR
+            ;
+
+funcall     :   VAR LPAR expr_list RPAR -> ^(FUNCTION VAR ^(PARAMS expr_list));
+expr_list   :   expr (COMMA! expr)* ;
