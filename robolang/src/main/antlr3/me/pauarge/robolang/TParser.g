@@ -32,6 +32,7 @@ tokens {
     LIST_INSTRUCTIONS;
     FUNCTION;
     PARAMS;
+    COND;
 }
 
 // What package should the generated source exist in?
@@ -53,7 +54,7 @@ instr       :   while
 
 assign      :   VAR ASSIGN^ expr;
 
-//cond        :   if elseif else? -> ^(COND if elseif else?);
+cond        :   if elseif else? -> ^(COND if elseif else?);
 
 if          :   IF^ LPAR! expr RPAR! LBRA! list_instr RBRA! ;
 
