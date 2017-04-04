@@ -26,6 +26,7 @@ options {
     package me.pauarge.robolang;
 }
 
+/*
 a : ^(SCRIPT stuff+)
   | SCRIPT
   ;
@@ -39,11 +40,10 @@ keyser
   : ^(KEYSER SOZE)
     { System.out.println("Found Keyser Soze!!"); }
   ;
+*/
 
 expression
-  : ^(ADD expression expression)
-  | ID
-  | INT
+  : ID
+  | NUM
   | STRING
   ;
-

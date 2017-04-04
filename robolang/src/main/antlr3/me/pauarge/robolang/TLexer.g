@@ -28,6 +28,8 @@ options {
 // This is just a simple lexer that matches the usual suspects
 //
 
+SEMI    : ';' ;
+
 WHILE   :   'while';
 FOR     :   'for';
 IF      :   'if';
@@ -57,11 +59,13 @@ RETURN  :   'return';
 PRINT   :   'print';
 LPAR    :   '(';
 RPAR    :   ')';
-SMICLN  :   ';';
-DOLLAR  :   '$';
-COMMA   :   ',';
 LBRA    :   '{';
 RBRA    :   '}';
+DOLLAR  :   '$';
+COMMA   :   ',';
+
+ID  :	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_')*
+    ;
 
 // C-style comments
 COMMENT	: '//' ~('\n'|'\r')* '\r'? '\n' {$channel=HIDDEN;}
@@ -72,16 +76,31 @@ COMMENT	: '//' ~('\n'|'\r')* '\r'? '\n' {$channel=HIDDEN;}
 STRING  :  '"' ( ESC_SEQ | ~('\\'|'"') )* '"'
         ;
 
-fragment
-ESC_SEQ
-    :   '\\' ('b'|'t'|'n'|'f'|'r'|'\"'|'\''|'\\')
-    ;
-
-// White spaces
-WS  	: ( ' '
+WS  :   ( ' '
         | '\t'
         | '\r'
         | '\n'
-        ) {$channel=HIDDEN;}
-    	;
+        ) {skip();}
+    ;
 
+fragment
+HEX_DIGIT : ('0'..'9'|'a'..'f'|'A'..'F') ;
+
+fragment
+ESC_SEQ
+    :   '\\' ('b'|'t'|'n'|'f'|'r'|'\"'|'\''|'\\')
+    |   UNICODE_ESC
+    |   OCTAL_ESC
+    ;
+
+fragment
+OCTAL_ESC
+    :   '\\' ('0'..'3') ('0'..'7') ('0'..'7')
+    |   '\\' ('0'..'7') ('0'..'7')
+    |   '\\' ('0'..'7')
+    ;
+
+fragment
+UNICODE_ESC
+    :   '\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+    ;
