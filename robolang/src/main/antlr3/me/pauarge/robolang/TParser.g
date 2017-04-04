@@ -35,11 +35,13 @@ options {
 // Some imaginary tokens for tree rewrites
 //
 tokens {
-    SCRIPT;
-    LIST_INSTRUCTIONS;
+    LIST_INSTR;
     FUNCTION;
     PARAMS;
     COND;
+    PARAMS;
+    PREF;
+    PVALUE;
 }
 
 // What package should the generated source exist in?
@@ -48,14 +50,28 @@ tokens {
     package me.pauarge.robolang;
 }
 
-prog        :   list_instr -> ^(LIST_INSTRUCTIONS list_instr) ;
+prog        :   list_instr -> ^(LIST_INSTR list_instr) ;
 
 list_instr  :   (instr SEMI!)+ ;
 
 instr       :   loop
             |   ifst
-            //|   assign
-            //|   func
+            |   assign
+            |   func
+            ;
+
+assign      :   ident ASSIGN^ expr ;
+
+ident       :   VAR^ | (DOLLAR^ VAR) ;
+
+func        :   DEF VAR LPAR params RPAR LBRA list_instr RBRA -> ^(DEF VAR params ^(LIST_INSTR list_instr)) ;
+
+params      :   list_param? -> ^(PARAMS list_param?) ;
+
+list_param  :   param (COMA! param)* ;
+
+param       :   REF id=ID -> ^(PREF[$id,$id.text])
+            |   id=ID -> ^(PVALUE[$id,$id.text])
             ;
 
 cond        :   ifst elifst elsest? -> ^(COND ifst elifst elsest?) ;            

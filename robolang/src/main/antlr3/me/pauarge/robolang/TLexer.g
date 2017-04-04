@@ -49,7 +49,7 @@ SUB     :   '-';
 TIMES   :   '*';
 DIV     :   '/';
 MOD     :   '%';
-VAR     :   ('a'..'z''A'..'Z')+ ('0'..'9''a'..'z''A'..'Z')*;
+VAR     :   ('a'..'z''A'..'Z')+ ('0'..'9''a'..'z''A'..'Z' | '_')* ;
 DEF     :   'def';
 NUM     :   ('0'..'9')+ ('.' ('0'..'9')+)?;
 FRONT   :   'move_front';
@@ -63,9 +63,7 @@ LBRA    :   '{';
 RBRA    :   '}';
 DOLLAR  :   '$';
 COMMA   :   ',';
-
-ID  :	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_')*
-    ;
+REF     :   '&';
 
 // C-style comments
 COMMENT	: '//' ~('\n'|'\r')* '\r'? '\n' {$channel=HIDDEN;}
