@@ -45,7 +45,7 @@ class Main {
                     parse(new File(args[i]));
                 }
             } else {
-                System.err.println("Usage: java -jar robolang-1.0-jar-with-dependencies.jar <directory | filename.dmo>");
+                System.err.println("Usage: java -jar robolang-1.0-jar-with-dependencies.jar <directory | filename.rl>");
             }
         } catch (Exception ex) {
             System.err.println("ANTLR demo parser threw exception:");
