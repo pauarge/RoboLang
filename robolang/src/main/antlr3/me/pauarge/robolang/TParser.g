@@ -52,11 +52,11 @@ tokens {
 
 prog        :   list_instr -> ^(LIST_INSTR list_instr) ;
 
-list_instr  :   (instr SEMI!)+ ;
+list_instr  :   (instr)+ ;
 
 instr       :   loop
             |   ifst
-            |   assign
+            |   assign SEMI!
             |   func
             ;
 
@@ -76,9 +76,9 @@ param       :   REF id=ID -> ^(PREF[$id,$id.text])
 
 cond        :   ifst elifst elsest? -> ^(COND ifst elifst elsest?) ;            
 
-ifst        :   IF^ LPAR! ADD RPAR! LBRA! list_instr RBRA! ;
+ifst        :   IF^ LPAR! expr RPAR! LBRA! list_instr RBRA! ;
 
-elifst      :   (ELIF^ LPAR! ADD RPAR! LBRA! list_instr RBRA!)* ;
+elifst      :   (ELIF^ LPAR! expr RPAR! LBRA! list_instr RBRA!)* ;
 
 elsest      :   ELSE^ LBRA! list_instr RBRA! ;
             

@@ -28,8 +28,8 @@ options {
 // This is just a simple lexer that matches the usual suspects
 //
 
-SEMI    : ';' ;
-
+SEMI    :   ';';
+ASSIGN  :   '=';
 WHILE   :   'while';
 FOR     :   'for';
 IF      :   'if';
@@ -43,13 +43,11 @@ LT      :   '<';
 GET     :   '>=';
 LET     :   '<=';
 EQ      :   '==';
-ASSIGN  :   '=';
 ADD     :   '+';
 SUB     :   '-';
 TIMES   :   '*';
 DIV     :   '/';
 MOD     :   '%';
-VAR     :   ('a'..'z''A'..'Z')+ ('0'..'9''a'..'z''A'..'Z' | '_')* ;
 DEF     :   'def';
 NUM     :   ('0'..'9')+ ('.' ('0'..'9')+)?;
 FRONT   :   'move_front';
@@ -64,6 +62,7 @@ RBRA    :   '}';
 DOLLAR  :   '$';
 COMMA   :   ',';
 REF     :   '&';
+VAR     :   ('a'..'z' | 'A'..'Z') ('0'..'9' | 'a'..'z' | 'A'..'Z' | '_')* ;
 
 // C-style comments
 COMMENT	: '//' ~('\n'|'\r')* '\r'? '\n' {$channel=HIDDEN;}
