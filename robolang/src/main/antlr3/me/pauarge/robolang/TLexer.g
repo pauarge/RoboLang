@@ -53,11 +53,14 @@ NUM     :   ('0'..'9')+ ('.' ('0'..'9')+)?;
 RETURN  :   'return';
 LPAR    :   '(';
 RPAR    :   ')';
+LCOR    :   '[';
+RCOR    :   ']';
 LBRA    :   '{';
 RBRA    :   '}';
 DOLLAR  :   '$';
 COMMA   :   ',';
 REF     :   '&';
+MR      :   ('mf'| 'rh' | 'ra' |'mb') '-' ('0'..'9')+ ('.' ('0'..'9')+)?;
 VAR     :   ('a'..'z' | 'A'..'Z') ('0'..'9' | 'a'..'z' | 'A'..'Z' | '_')* ;
 
 // C-style comments

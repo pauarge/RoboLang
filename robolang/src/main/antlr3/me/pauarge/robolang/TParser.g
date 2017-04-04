@@ -41,6 +41,7 @@ tokens {
     COND;
     PARAMS;
     PREF;
+    ARRAY;
     PVALUE;
 }
 
@@ -61,9 +62,17 @@ instr       :   loop
             |   funcall SEMI!
             ;
 
-assign      :   ident ASSIGN^ expr ;
+assign      :   ident ASSIGN assign2 -> ^(ASSIGN ident assign2);
 
-ident       :   VAR^ | (DOLLAR^ VAR) ;
+assign2     :   (expr|array|array_expr|concat);
+
+concat      :   VAR|array (ADD^ (array|VAR))+;
+
+array_expr  :   VAR LCOR expr RCOR -> ^(ARRAY["ARRAY"] VAR expr);
+
+array       :   LCOR! MR (COMMA! MR)* RCOR!;
+
+ident       :   (VAR^ | (DOLLAR^ VAR) | array_expr) ;
 
 func        :   DEF VAR LPAR params RPAR LBRA list_instr ret? RBRA -> ^(DEF VAR params ^(LIST_INSTR list_instr) ret?) ;
 
@@ -71,7 +80,7 @@ ret         : (RETURN expr SEMI);
 
 params      :   list_param? -> ^(PARAMS list_param?) ;
 
-list_param  :   param (COMA! param)* ;
+list_param  :   param (COMMA! param)* ;
 
 param       :   REF id=VAR -> ^(PREF[$id,$id.text])
             |   id=VAR -> ^(PVALUE[$id,$id.text])
@@ -91,7 +100,7 @@ expr        :   boolterm (OR^ boolterm)* ;
 
 boolterm    :   boolfact (AND^ boolfact)* ;
 
-boolfact    :   num_expr ((EQUAL^ | NOT_EQUAL^ | LT^ | LE^ | GT^ | GE^) num_expr)? ;
+boolfact    :   num_expr ((EQUAL^ | NOT_EQUAL^ | LT^ | LET^ | GT^ | GET^) num_expr)? ;
 
 num_expr    :   term ( (ADD^ | SUB^) term)* ;
 
