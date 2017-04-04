@@ -65,14 +65,16 @@ assign      :   ident ASSIGN^ expr ;
 
 ident       :   VAR^ | (DOLLAR^ VAR) ;
 
-func        :   DEF VAR LPAR params RPAR LBRA list_instr (RETURN expr)? RBRA -> ^(DEF VAR params ^(LIST_INSTR list_instr) expr?) ;
+func        :   DEF VAR LPAR params RPAR LBRA list_instr ret? RBRA -> ^(DEF VAR params ^(LIST_INSTR list_instr) ret?) ;
+
+ret         : (RETURN expr SEMI);
 
 params      :   list_param? -> ^(PARAMS list_param?) ;
 
 list_param  :   param (COMA! param)* ;
 
-param       :   REF id=ID -> ^(PREF[$id,$id.text])
-            |   id=ID -> ^(PVALUE[$id,$id.text])
+param       :   REF id=VAR -> ^(PREF[$id,$id.text])
+            |   id=VAR -> ^(PVALUE[$id,$id.text])
             ;
 
 cond        :   ifst elifst elsest? -> ^(COND ifst elifst elsest?) ;            
