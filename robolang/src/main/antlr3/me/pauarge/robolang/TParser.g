@@ -65,7 +65,7 @@ assign      :   ident ASSIGN^ expr ;
 
 ident       :   VAR^ | (DOLLAR^ VAR) ;
 
-func        :   DEF VAR LPAR params RPAR LBRA list_instr RBRA -> ^(DEF VAR params ^(LIST_INSTR list_instr)) ;
+func        :   DEF VAR LPAR params RPAR LBRA list_instr RETURN? RBRA -> ^(DEF VAR params ^(LIST_INSTR list_instr)) ;
 
 params      :   list_param? -> ^(PARAMS list_param?) ;
 
