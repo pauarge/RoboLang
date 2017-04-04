@@ -6,7 +6,7 @@ import org.antlr.stringtemplate.*;
 
 import java.io.*;
 
-//import me.pauarge.robolang.TParser.a_return;
+import me.pauarge.robolang.TParser.prog_return;
 
 
 /**
@@ -132,7 +132,7 @@ class Main {
             //
             System.out.println("    Parser Start");
             long pStart = System.currentTimeMillis();
-            //a_return psrReturn = parser.a();
+            prog_return psrReturn = parser.prog();
             long stop = System.currentTimeMillis();
             System.out.println("      Parsed in " + (stop - pStart) + "ms.");
 
@@ -148,7 +148,7 @@ class Main {
 
             // Pick up the generic tree
             //
-            //Tree t = (Tree) psrReturn.getTree();
+            Tree t = (Tree) psrReturn.getTree();
 
             // NOw walk it with the generic tree walker, which does nothing but
             // verify the tree really.
