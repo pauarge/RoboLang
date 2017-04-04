@@ -58,13 +58,14 @@ instr       :   loop
             |   ifst
             |   assign SEMI!
             |   func
+            |   funcall SEMI!
             ;
 
 assign      :   ident ASSIGN^ expr ;
 
 ident       :   VAR^ | (DOLLAR^ VAR) ;
 
-func        :   DEF VAR LPAR params RPAR LBRA list_instr RBRA -> ^(DEF VAR params ^(LIST_INSTR list_instr)) ;
+func        :   DEF VAR LPAR params RPAR LBRA list_instr RETURN? RBRA -> ^(DEF VAR params ^(LIST_INSTR list_instr)) ;
 
 params      :   list_param? -> ^(PARAMS list_param?) ;
 
@@ -102,5 +103,5 @@ atom        :   VAR
             |   DOLLAR^ VAR
             ;
 
-funcall     :   VAR LPAR expr_list RPAR -> ^(FUNCTION VAR ^(PARAMS expr_list)) ;
+funcall     :   VAR LPAR expr_list? RPAR -> ^(FUNCTION VAR ^(PARAMS expr_list?)) ;
 expr_list   :   expr (COMMA! expr)* ;
