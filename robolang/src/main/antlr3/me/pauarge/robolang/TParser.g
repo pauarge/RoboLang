@@ -63,11 +63,7 @@ instr       :   loop
             |   forst
             ;
 
-assign      :   ident ASSIGN assign2 -> ^(ASSIGN ident assign2);
-
-assign2     :   (expr|array|array_expr|concat);
-
-concat      :   VAR|array (ADD^ (array|VAR))+;
+assign      :   ident ASSIGN expr -> ^(ASSIGN ident expr);
 
 array_expr  :   VAR LCOR expr RCOR -> ^(ARRAY VAR expr);
 
@@ -116,6 +112,8 @@ factor      :   (ADD^ | SUB^)? atom ;
 atom        :   VAR
             |   funcall
             |   NUM
+            |   array
+            |   array_expr
             |   DOLLAR^ VAR
             ;
 
