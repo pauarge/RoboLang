@@ -60,6 +60,7 @@ instr       :   loop
             |   assign SEMI!
             |   func
             |   funcall SEMI!
+            |   forst
             ;
 
 assign      :   ident ASSIGN assign2 -> ^(ASSIGN ident assign2);
@@ -68,9 +69,11 @@ assign2     :   (expr|array|array_expr|concat);
 
 concat      :   VAR|array (ADD^ (array|VAR))+;
 
-array_expr  :   VAR LCOR expr RCOR -> ^(ARRAY["ARRAY"] VAR expr);
+array_expr  :   VAR LCOR expr RCOR -> ^(ARRAY VAR expr);
 
-array       :   LCOR! MR (COMMA! MR)* RCOR!;
+array       :   LCOR array2 RCOR -> ^(ARRAY array2);
+
+array2      :   MR (COMMA! MR)* ;
 
 ident       :   (VAR^ | (DOLLAR^ VAR) | array_expr) ;
 
@@ -93,6 +96,8 @@ ifst        :   IF^ LPAR! expr RPAR! LBRA! list_instr RBRA! ;
 elifst      :   (ELIF^ LPAR! expr RPAR! LBRA! list_instr RBRA!)* ;
 
 elsest      :   ELSE^ LBRA! list_instr RBRA! ;
+
+forst     :   FOR^ LPAR! VAR IN!  (array | VAR) RPAR! LBRA! list_instr RBRA!;
             
 loop        :   WHILE^ LPAR! expr RPAR! LBRA! list_instr RBRA! ;
 

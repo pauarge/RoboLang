@@ -30,17 +30,18 @@ options {
 
 SEMI    :   ';';
 ASSIGN  :   '=';
-WHILE   :   'while';
 FOR     :   'for';
+IN      :   'in';
+WHILE   :   'while';
 IF      :   'if';
 ELIF    :   'elif';
 ELSE    :   'else';
 AND     :   'and';
 OR      :   'or';
 NOT     :   'not';
-GET     :   '>''=';
-LET     :   '<''=';
-EQ      :   '=''=';
+GET     :   '>=';
+LET     :   '<=';
+EQ      :   '==';
 GT      :   '>';
 LT      :   '<';
 ADD     :   '+';
