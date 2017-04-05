@@ -93,7 +93,9 @@ elifst      :   (ELIF^ LPAR! expr RPAR! LBRA! list_instr RBRA!)* ;
 
 elsest      :   ELSE^ LBRA! list_instr RBRA! ;
 
-forst     :   FOR^ LPAR! VAR IN!  (array | VAR) RPAR! LBRA! list_instr RBRA!;
+forst       :   FOR LPAR VAR IN  forst2 RPAR LBRA list_instr RBRA -> ^(FOR VAR forst2 ^(LIST_INSTR list_instr));
+
+forst2      :   array | VAR;
             
 loop        :   WHILE^ LPAR! expr RPAR! LBRA! list_instr RBRA! ;
 
