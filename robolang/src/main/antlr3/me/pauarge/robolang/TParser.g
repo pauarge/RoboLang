@@ -56,7 +56,7 @@ prog        :   list_instr -> ^(LIST_INSTR list_instr) ;
 list_instr  :   (instr)+ ;
 
 instr       :   loop
-            |   ifst
+            |   cond
             |   assign SEMI!
             |   func
             |   funcall SEMI!
@@ -75,7 +75,7 @@ ident       :   (VAR^ | (DOLLAR^ VAR) | array_expr) ;
 
 func        :   DEF VAR LPAR params RPAR LBRA list_instr ret? RBRA -> ^(DEF VAR params ^(LIST_INSTR list_instr) ret?) ;
 
-ret         : (RETURN expr SEMI);
+ret         :   (RETURN expr SEMI);
 
 params      :   list_param? -> ^(PARAMS list_param?) ;
 
@@ -85,19 +85,21 @@ param       :   REF id=VAR -> ^(PREF[$id,$id.text])
             |   id=VAR -> ^(PVALUE[$id,$id.text])
             ;
 
-cond        :   ifst elifst elsest? -> ^(COND ifst elifst elsest?) ;            
+cond        :   cond2 -> ^(COND cond2);
 
-ifst        :   IF^ LPAR! expr RPAR! LBRA! list_instr RBRA! ;
+cond2       :   ifst elifst* elsest?;
 
-elifst      :   (ELIF^ LPAR! expr RPAR! LBRA! list_instr RBRA!)* ;
+ifst        :   IF LPAR expr RPAR LBRA list_instr RBRA -> ^(IF expr ^(LIST_INSTR list_instr)) ;
 
-elsest      :   ELSE^ LBRA! list_instr RBRA! ;
+elifst      :   ELIF LPAR expr RPAR LBRA list_instr RBRA -> ^(ELIF expr ^(LIST_INSTR list_instr));
+
+elsest      :   ELSE LBRA list_instr RBRA -> ^(ELSE ^(LIST_INSTR list_instr));
 
 forst       :   FOR LPAR VAR IN  forst2 RPAR LBRA list_instr RBRA -> ^(FOR VAR forst2 ^(LIST_INSTR list_instr));
 
 forst2      :   array | VAR;
             
-loop        :   WHILE^ LPAR! expr RPAR! LBRA! list_instr RBRA! ;
+loop        :   WHILE LPAR expr RPAR LBRA list_instr RBRA -> ^(WHILE expr ^(LIST_INSTR list_instr));
 
 expr        :   boolterm (OR^ boolterm)* ;
 
