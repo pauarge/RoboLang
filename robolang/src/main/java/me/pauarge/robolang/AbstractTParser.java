@@ -11,7 +11,6 @@ import org.antlr.runtime.*;
  * runtime methods, such as an implementation of a custom error reporting
  * method, symbol table populating methods and so on.
  *
- * @author Jim Idle - Temporal Wave LLC - jimi@temporal-wave.com
  */
 public abstract class AbstractTParser
 

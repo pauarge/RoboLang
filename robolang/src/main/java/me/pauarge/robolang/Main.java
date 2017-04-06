@@ -8,12 +8,6 @@ import java.io.*;
 
 import me.pauarge.robolang.TParser.prog_return;
 
-
-/**
- * Test driver program for the ANTLR3 Maven Architype demo
- *
- * @author Jim Idle (jimi@temporal-wave.com)
- */
 class Main {
 
     private static boolean makeDot = false;
@@ -149,23 +143,6 @@ class Main {
             // Pick up the generic tree
             //
             Tree t = (Tree) psrReturn.getTree();
-
-            // NOw walk it with the generic tree walker, which does nothing but
-            // verify the tree really.
-            //
-            /*try {
-                if (parser.getNumberOfSyntaxErrors() == 0) {
-                    TTree walker = new TTree(new CommonTreeNodeStream(t));
-                    System.out.println("    AST Walk Start\n");
-                    pStart = System.currentTimeMillis();
-                    walker.expression();
-                    stop = System.currentTimeMillis();
-                    System.out.println("\n      AST Walked in " + (stop - pStart) + "ms.");
-                }
-            } catch (Exception w) {
-                System.out.println("AST walk caused exception.");
-                w.printStackTrace();
-            }*/
 
             if (makeDot && tokens.size() < 4096) {
 
