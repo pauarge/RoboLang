@@ -43,6 +43,7 @@ tokens {
     PREF;
     ARRAY;
     PVALUE;
+    ARRAY_EXPR;
 }
 
 // What package should the generated source exist in?
@@ -65,7 +66,7 @@ instr       :   loop
 
 assign      :   ident ASSIGN expr -> ^(ASSIGN ident expr);
 
-array_expr  :   VAR LCOR expr RCOR -> ^(ARRAY VAR expr);
+array_expr  :   VAR LCOR expr RCOR -> ^(ARRAY_EXPR VAR expr);
 
 array       :   LCOR array2 RCOR -> ^(ARRAY array2);
 
