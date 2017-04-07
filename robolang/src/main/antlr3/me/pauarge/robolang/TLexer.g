@@ -28,7 +28,6 @@ options {
 // This is just a simple lexer that matches the usual suspects
 //
 
-SEMI    :   ';';
 ASSIGN  :   '=';
 FOR     :   'for';
 IN      :   'in';
@@ -36,12 +35,15 @@ WHILE   :   'while';
 IF      :   'if';
 ELIF    :   'elif';
 ELSE    :   'else';
+RETURN  :   'return';
+DEF     :   'def';
 AND     :   'and';
 OR      :   'or';
 NOT     :   'not';
 GET     :   '>=';
 LET     :   '<=';
 EQ      :   '==';
+NEQ     :   '!=';
 GT      :   '>';
 LT      :   '<';
 ADD     :   '+';
@@ -49,9 +51,6 @@ SUB     :   '-';
 TIMES   :   '*';
 DIV     :   '/';
 MOD     :   '%';
-DEF     :   'def';
-NUM     :   ('0'..'9')+ ('.' ('0'..'9')+)?;
-RETURN  :   'return';
 LPAR    :   '(';
 RPAR    :   ')';
 LCOR    :   '[';
@@ -61,8 +60,12 @@ RBRA    :   '}';
 DOLLAR  :   '$';
 COMMA   :   ',';
 REF     :   '&';
+TRUE    :   'true';
+FALSE   :   'false';
+NUM     :   ('0'..'9')+ ('.' ('0'..'9')+)?;
 MR      :   ('mf'| 'rh' | 'ra' |'mb') '-' ('0'..'9')+ ('.' ('0'..'9')+)?;
 VAR     :   ('a'..'z' | 'A'..'Z') ('0'..'9' | 'a'..'z' | 'A'..'Z' | '_')* ;
+SEMI    :   ';';
 
 // C-style comments
 COMMENT	: '//' ~('\n'|'\r')* '\r'? '\n' {$channel=HIDDEN;}

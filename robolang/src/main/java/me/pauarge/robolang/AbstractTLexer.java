@@ -13,7 +13,6 @@ import org.antlr.runtime.RecognizerSharedState;
  * error overrides etc in the super class. This way you will keep
  * the lexer grammar clean and hunky dory.
  *
- * @author Jim Idle - Temporal Wave LLC (jimi@idle.ws)
  */
 public abstract class AbstractTLexer
         extends Lexer
@@ -48,4 +47,3 @@ public abstract class AbstractTLexer
     }
 
 }
-

@@ -43,6 +43,7 @@ tokens {
     PREF;
     ARRAY;
     PVALUE;
+    ARRAY_EXPR;
 }
 
 // What package should the generated source exist in?
@@ -65,7 +66,7 @@ instr       :   loop
 
 assign      :   ident ASSIGN expr -> ^(ASSIGN ident expr);
 
-array_expr  :   VAR LCOR expr RCOR -> ^(ARRAY VAR expr);
+array_expr  :   VAR LCOR expr RCOR -> ^(ARRAY_EXPR VAR expr);
 
 array       :   LCOR array2 RCOR -> ^(ARRAY array2);
 
@@ -95,7 +96,7 @@ elifst      :   ELIF LPAR expr RPAR LBRA list_instr RBRA -> ^(ELIF expr ^(LIST_I
 
 elsest      :   ELSE LBRA list_instr RBRA -> ^(ELSE ^(LIST_INSTR list_instr));
 
-forst       :   FOR LPAR VAR IN  forst2 RPAR LBRA list_instr RBRA -> ^(FOR VAR forst2 ^(LIST_INSTR list_instr));
+forst       :   FOR LPAR VAR IN forst2 RPAR LBRA list_instr RBRA -> ^(FOR VAR forst2 ^(LIST_INSTR list_instr));
 
 forst2      :   array | VAR;
             
@@ -105,7 +106,7 @@ expr        :   boolterm (OR^ boolterm)* ;
 
 boolterm    :   boolfact (AND^ boolfact)* ;
 
-boolfact    :   num_expr ((EQUAL^ | NOT_EQUAL^ | LT^ | LET^ | GT^ | GET^) num_expr)? ;
+boolfact    :   TRUE | FALSE | num_expr ((EQ^ | NEQ^ | LT^ | LET^ | GT^ | GET^) num_expr)? ;
 
 num_expr    :   term ( (ADD^ | SUB^) term)* ;
 
@@ -119,6 +120,7 @@ atom        :   VAR
             |   array
             |   array_expr
             |   DOLLAR^ VAR
+            |   LPAR! expr RPAR!
             ;
 
 funcall     :   VAR LPAR expr_list? RPAR -> ^(FUNCTION VAR ^(PARAMS expr_list?)) ;
