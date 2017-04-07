@@ -1,7 +1,7 @@
 x = 3;
 y = 0.177;
 if(x%2 == 0) {
-	x = (x-1) != y and y;
+	x = (x-1*(y+0.4)) != y and y;
 }
 else {
 	while(x > y) { 
