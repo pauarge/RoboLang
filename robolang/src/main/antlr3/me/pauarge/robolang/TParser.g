@@ -96,7 +96,7 @@ elifst      :   ELIF LPAR expr RPAR LBRA list_instr RBRA -> ^(ELIF expr ^(LIST_I
 
 elsest      :   ELSE LBRA list_instr RBRA -> ^(ELSE ^(LIST_INSTR list_instr));
 
-forst       :   FOR LPAR VAR IN  forst2 RPAR LBRA list_instr RBRA -> ^(FOR VAR forst2 ^(LIST_INSTR list_instr));
+forst       :   FOR LPAR VAR IN forst2 RPAR LBRA list_instr RBRA -> ^(FOR VAR forst2 ^(LIST_INSTR list_instr));
 
 forst2      :   array | VAR;
             
@@ -106,7 +106,7 @@ expr        :   boolterm (OR^ boolterm)* ;
 
 boolterm    :   boolfact (AND^ boolfact)* ;
 
-boolfact    :   num_expr ((EQUAL^ | NOT_EQUAL^ | LT^ | LET^ | GT^ | GET^) num_expr)? ;
+boolfact    :   TRUE | FALSE | num_expr ((EQUAL^ | NOT_EQUAL^ | LT^ | LET^ | GT^ | GET^) num_expr)? ;
 
 num_expr    :   term ( (ADD^ | SUB^) term)* ;
 

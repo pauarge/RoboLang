@@ -57,4 +57,3 @@ public abstract class AbstractTParser
         super.displayRecognitionError(tokenNames, e);
     }
 }
-
