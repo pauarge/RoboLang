@@ -106,7 +106,7 @@ expr        :   boolterm (OR^ boolterm)* ;
 
 boolterm    :   boolfact (AND^ boolfact)* ;
 
-boolfact    :   TRUE | FALSE | num_expr ((EQUAL^ | NOT_EQUAL^ | LT^ | LET^ | GT^ | GET^) num_expr)? ;
+boolfact    :   TRUE | FALSE | num_expr ((EQ^ | NEQ^ | LT^ | LET^ | GT^ | GET^) num_expr)? ;
 
 num_expr    :   term ( (ADD^ | SUB^) term)* ;
 
@@ -120,6 +120,7 @@ atom        :   VAR
             |   array
             |   array_expr
             |   DOLLAR^ VAR
+            |   LPAR! expr RPAR!
             ;
 
 funcall     :   VAR LPAR expr_list? RPAR -> ^(FUNCTION VAR ^(PARAMS expr_list?)) ;
