@@ -1,4 +1,4 @@
-omentari de
+/*Comentari de
 *   múltiples 
 *   linies.
 */
