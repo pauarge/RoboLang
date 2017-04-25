@@ -34,10 +34,13 @@ class Main {
                 }
                 // Recursively parse each directory, and each file on the
                 // command line
-                //
-                for (int i = s; i < args.length; i++) {
-                    parse(new File(args[i]));
-                }
+                Tree t = parse(new File(args[s]));
+
+
+                //Crear una instancia de interpet amb el tree t, que conte la root del arbre
+
+
+
             } else {
                 System.err.println("Usage: java -jar robolang-1.0-jar-with-dependencies.jar <directory | filename.rl>");
             }
@@ -47,48 +50,31 @@ class Main {
         }
     }
 
-    public static void parse(File source) throws Exception {
+    public static Tree parse(File source) throws Exception {
 
         // Open the supplied file or directory
         //
         try {
+            String sourceFile = source.getName();
 
-            // From here, any exceptions are just thrown back up the chain
-            //
-            if (source.isDirectory()) {
-                System.out.println("Directory: " + source.getAbsolutePath());
-                String files[] = source.list();
+            if (sourceFile.length() > 3) {
+                String suffix = sourceFile.substring(sourceFile.length() - 3).toLowerCase();
 
-                for (int i = 0; i < files.length; i++) {
-                    parse(new File(source, files[i]));
-                }
-            }
-
-            // Else find out if it is an ASP.Net file and parse it if it is
-            //
-            else {
-                // File without paths etc
+                // Ensure that this is a DEMO script (or seemingly)
                 //
-                String sourceFile = source.getName();
-
-                if (sourceFile.length() > 3) {
-                    String suffix = sourceFile.substring(sourceFile.length() - 3).toLowerCase();
-
-                    // Ensure that this is a DEMO script (or seemingly)
-                    //
-                    if (suffix.compareTo(".rl") == 0) {
-                        parseSource(source.getAbsolutePath());
-                    }
+                if (suffix.compareTo(".rl") == 0) {
+                    Tree t = parseSource(source.getAbsolutePath());
+                    return t;
                 }
             }
         } catch (Exception ex) {
             System.err.println("ANTLR demo parser caught error on file open:");
             ex.printStackTrace();
         }
-
+        return null;
     }
 
-    public static void parseSource(String source) throws Exception {
+    public static Tree parseSource(String source) throws Exception {
         // Parse an ANTLR demo file
         //
         try {
@@ -182,17 +168,21 @@ class Main {
                 proc.waitFor();
                 stop = System.currentTimeMillis();
                 System.out.println("      PNG graphic produced in " + (stop - pStart) + "ms.");
+
             }
+            return t;
         } catch (FileNotFoundException ex) {
             // The file we tried to parse does not exist
             //
             System.err.println("\n  !!The file " + source + " does not exist!!\n");
+            return null;
         } catch (Exception ex) {
             // Something went wrong in the parser, report this
             //
             System.err.println("Parser threw an exception:\n\n");
             ex.printStackTrace();
         }
+        return null;
     }
 
 }
