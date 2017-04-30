@@ -37,6 +37,7 @@ options {
 tokens {
     LIST_INSTR;
     FUNCTION;
+    FUNCALL;
     PARAMS;
     COND;
     PARAMS;
@@ -74,7 +75,7 @@ array2      :   MR (COMMA! MR)* ;
 
 ident       :   (VAR^ | (DOLLAR^ VAR) | array_expr) ;
 
-func        :   DEF VAR LPAR params RPAR LBRA list_instr ret? RBRA -> ^(DEF VAR params ^(LIST_INSTR list_instr) ret?) ;
+func        :   DEF VAR LPAR params RPAR LBRA list_instr ret? RBRA -> ^(FUNCTION VAR params ^(LIST_INSTR list_instr) ret?) ;
 
 ret         :   (RETURN expr SEMI);
 
@@ -123,5 +124,5 @@ atom        :   VAR
             |   LPAR! expr RPAR!
             ;
 
-funcall     :   VAR LPAR expr_list? RPAR -> ^(FUNCTION VAR ^(PARAMS expr_list?)) ;
+funcall     :   VAR LPAR expr_list? RPAR -> ^(FUNCALL VAR ^(PARAMS expr_list?)) ;
 expr_list   :   expr (COMMA! expr)* ;
