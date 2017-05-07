@@ -11,9 +11,7 @@ import me.pauarge.robolang.TParser.prog_return;
 class Main {
 
     private static boolean makeDot = false;
-    private static boolean execute = true;
-
-    static TLexer lexer;
+    private static TLexer lexer;
 
     public static void main(String[] args) {
         try {
@@ -26,9 +24,8 @@ class Main {
                     makeDot = true;
                     s = 1;
                 }
-                // Recursively parse each directory, and each file on the
-                // command line
-                Tree t = parse(new File(args[s]));
+
+                parse(new File(args[s]));
 
             } else {
                 System.err.println("Usage: java -jar robolang-1.0-jar-with-dependencies.jar <directory | filename.rl>");
@@ -46,7 +43,7 @@ class Main {
             if (sourceFile.length() > 3) {
                 String suffix = sourceFile.substring(sourceFile.length() - 3).toLowerCase();
                 if (suffix.compareTo(".rl") == 0) {
-                    Tree t = parseSource(source.getAbsolutePath());
+                    Tree t = parseSource(sourceFile, source.getAbsolutePath());
                     return t;
                 }
             }
@@ -57,7 +54,7 @@ class Main {
         return null;
     }
 
-    public static Tree parseSource(String source) throws Exception {
+    public static Tree parseSource(String sourceFile, String source) throws Exception {
         try {
             // First create a file stream using the povided file/path
             // and tell the lexer that that is the character source.
@@ -76,6 +73,14 @@ class Main {
             TParser parser = new TParser(tokens);
             prog_return psrReturn = parser.prog();
             Tree t = (Tree) psrReturn.getTree();
+
+            try {
+                BufferedWriter out = new BufferedWriter(new FileWriter(sourceFile + ".rltree"));
+                out.write(t.toStringTree());
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             if (makeDot && tokens.size() < 4096) {
                 // Now stringify it if you want to...
@@ -110,26 +115,11 @@ class Main {
                 proc.waitFor();
             }
 
-            if (execute) {
-                try {
-                    Interp I = new Interp(t);
-                    I.run();
-                } catch (RuntimeException e) {
-
-                } catch (StackOverflowError e) {
-
-                }
-            }
-
             return t;
         } catch (FileNotFoundException ex) {
-            // The file we tried to parse does not exist
-            //
             System.err.println("\n  !!The file " + source + " does not exist!!\n");
             return null;
         } catch (Exception ex) {
-            // Something went wrong in the parser, report this
-            //
             System.err.println("Parser threw an exception:\n\n");
             ex.printStackTrace();
         }
