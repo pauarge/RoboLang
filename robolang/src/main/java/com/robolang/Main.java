@@ -1,12 +1,10 @@
-package me.pauarge.robolang;
+package com.robolang;
 
 import org.antlr.runtime.*;
 import org.antlr.runtime.tree.*;
 import org.antlr.stringtemplate.*;
 
 import java.io.*;
-
-import me.pauarge.robolang.TParser.prog_return;
 
 class Main {
 
@@ -41,9 +39,10 @@ class Main {
             String sourceFile = source.getName();
 
             if (sourceFile.length() > 3) {
+                String filename = sourceFile.substring(0, sourceFile.length() - 3);
                 String suffix = sourceFile.substring(sourceFile.length() - 3).toLowerCase();
                 if (suffix.compareTo(".rl") == 0) {
-                    Tree t = parseSource(sourceFile, source.getAbsolutePath());
+                    Tree t = parseSource(filename, source.getAbsolutePath());
                     return t;
                 }
             }
@@ -54,7 +53,7 @@ class Main {
         return null;
     }
 
-    public static Tree parseSource(String sourceFile, String source) throws Exception {
+    public static Tree parseSource(String fileName, String source) throws Exception {
         try {
             // First create a file stream using the povided file/path
             // and tell the lexer that that is the character source.
@@ -71,11 +70,10 @@ class Main {
             // Now we need an instance of our parser
             //
             TParser parser = new TParser(tokens);
-            prog_return psrReturn = parser.prog();
-            Tree t = (Tree) psrReturn.getTree();
+            Tree t = (Tree) parser.prog().getTree();
 
             try {
-                BufferedWriter out = new BufferedWriter(new FileWriter(sourceFile + ".rltree"));
+                BufferedWriter out = new BufferedWriter(new FileWriter(fileName + ".rltree"));
                 out.write(t.toStringTree());
                 out.close();
             } catch (IOException e) {
@@ -83,10 +81,6 @@ class Main {
             }
 
             if (makeDot && tokens.size() < 4096) {
-                // Now stringify it if you want to...
-                //
-                // System.out.println(t.toStringTree());
-
                 // Use the ANLTR built in dot generator
                 //
                 DOTTreeGenerator gen = new DOTTreeGenerator();

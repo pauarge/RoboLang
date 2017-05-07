@@ -43,7 +43,7 @@ tokens {
 // What package should the generated source exist in?
 //
 @header {
-    package me.pauarge.robolang;
+    package com.robolang;
 }
 
 prog        :   list_instr -> ^(LIST_INSTR list_instr) ;

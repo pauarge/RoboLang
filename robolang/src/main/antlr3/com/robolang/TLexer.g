@@ -8,7 +8,7 @@ options {
 //
 @header {
 
-    package me.pauarge.robolang;
+    package com.robolang;
 }
 
 // This is just a simple lexer that matches the usual suspects
