@@ -6,7 +6,7 @@ import org.antlr.stringtemplate.*;
 
 import java.io.*;
 
-class Main {
+class RoboParser {
 
     private static boolean makeDot = false;
     private static TLexer lexer;
