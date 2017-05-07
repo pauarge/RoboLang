@@ -13,6 +13,7 @@ hs_err_pid*
 
 # IntelliJ
 .idea/
+.iml
 
 # Maven
 
@@ -30,6 +31,5 @@ buildNumber.properties
 !/.mvn/wrapper/maven-wrapper.jar
 
 # Generated files for representing trees
-
 *.dot
 *.png
