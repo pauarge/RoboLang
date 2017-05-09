@@ -118,7 +118,7 @@
                     <archive>
 
                         <manifest>
-                            <mainClass>com.robolang.RoboParser</mainClass>
+                            <mainClass>com.robolang.Main</mainClass>
                         </manifest>
                     </archive>
 
