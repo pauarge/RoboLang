@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-public class RoboInterpreter {
+public class Main {
 
     // TODO: Solve adding parents
     public static void main(String[] args) {
