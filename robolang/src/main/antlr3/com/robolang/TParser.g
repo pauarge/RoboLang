@@ -111,6 +111,7 @@ factor      :   (ADD^ | SUB^)? atom ;
 atom        :   VAR
             |   funcall
             |   NUM
+            |   STRING
             |   array
             |   array_expr
             |   DOLLAR^ VAR

@@ -1,3 +1,5 @@
+test = "Hola nom";
+
 if(distance(45,true) > distance(45,false)) {
     rotate(45,true);
 } else {

@@ -39,10 +39,9 @@ class RoboParser {
             String sourceFile = source.getName();
 
             if (sourceFile.length() > 3) {
-                String filename = sourceFile.substring(0, sourceFile.length() - 3);
                 String suffix = sourceFile.substring(sourceFile.length() - 3).toLowerCase();
                 if (suffix.compareTo(".rl") == 0) {
-                    Tree t = parseSource(filename, source.getAbsolutePath());
+                    Tree t = parseSource(source.getAbsolutePath());
                     return t;
                 }
             }
@@ -53,7 +52,7 @@ class RoboParser {
         return null;
     }
 
-    public static Tree parseSource(String fileName, String source) throws Exception {
+    public static Tree parseSource(String source) throws Exception {
         try {
             // First create a file stream using the povided file/path
             // and tell the lexer that that is the character source.
@@ -73,7 +72,7 @@ class RoboParser {
             Tree t = (Tree) parser.prog().getTree();
 
             try {
-                BufferedWriter out = new BufferedWriter(new FileWriter(fileName + ".rltree"));
+                BufferedWriter out = new BufferedWriter(new FileWriter(source.substring(0, source.length() - 2) + "rltree"));
                 out.write(t.toStringTree());
                 out.close();
             } catch (IOException e) {
