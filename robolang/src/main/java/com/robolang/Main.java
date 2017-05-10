@@ -1,14 +1,25 @@
 package com.robolang;
 
-import org.antlr.runtime.*;
-import org.antlr.runtime.tree.*;
-import org.antlr.stringtemplate.*;
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.ANTLRFileStream;
+import org.antlr.runtime.tree.CommonTreeAdaptor;
+import org.antlr.runtime.tree.DOTTreeGenerator;
+import org.antlr.runtime.tree.Tree;
 
-import java.io.*;
+import org.antlr.stringtemplate.StringTemplate;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+
+import com.robolang.TLexer;
+import com.robolang.TParser;
+
 
 class Main {
 
     private static boolean makeDot = false;
+    private static boolean compile = true;
     private static TLexer lexer;
 
     public static void main(String[] args) {
@@ -23,6 +34,11 @@ class Main {
                     s = 1;
                 }
 
+                if (args[s].startsWith("-nocompile")) {
+                    compile = false;
+                    s += 1;
+                }
+
                 parse(new File(args[s]));
 
             } else {
@@ -34,89 +50,58 @@ class Main {
         }
     }
 
-    public static Tree parse(File source) throws Exception {
+    private static void parse(File source) throws Exception {
         try {
             String sourceFile = source.getName();
 
             if (sourceFile.length() > 3) {
                 String suffix = sourceFile.substring(sourceFile.length() - 3).toLowerCase();
                 if (suffix.compareTo(".rl") == 0) {
-                    Tree t = parseSource(source.getAbsolutePath());
-                    return t;
+                    parseSource(source.getAbsolutePath());
                 }
             }
         } catch (Exception ex) {
             System.err.println("Robolang parser caught error on file open:");
             ex.printStackTrace();
         }
-        return null;
     }
 
-    public static Tree parseSource(String source) throws Exception {
+    private static void parseSource(String source) throws Exception {
         try {
-            // First create a file stream using the povided file/path
-            // and tell the lexer that that is the character source.
-            // You can also use text that you have already read of course
-            // by using the string stream.
-            //
             lexer.setCharStream(new ANTLRFileStream(source, "UTF8"));
-
-            // Using the lexer as the token source, we create a token
-            // stream to be consumed by the parser
-            //
             CommonTokenStream tokens = new CommonTokenStream(lexer);
 
-            // Now we need an instance of our parser
-            //
             TParser parser = new TParser(tokens);
             Tree t = (Tree) parser.prog().getTree();
-
-            try {
-                BufferedWriter out = new BufferedWriter(new FileWriter(source.substring(0, source.length() - 2) + "rltree"));
-                out.write(t.toStringTree());
-                out.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            source = source.substring(0, source.length() - 2);
 
             if (makeDot && tokens.size() < 4096) {
-                // Use the ANLTR built in dot generator
-                //
                 DOTTreeGenerator gen = new DOTTreeGenerator();
-
-                // Which we can cause to generate the DOT specification
-                // with the input file name suffixed with .dot. You can then use
-                // the graphviz tools or zgrviewer (Java) to view the graphical
-                // version of the dot file.
-                //
-                source = source.substring(0, source.length() - 2);
                 String outputName = source + "dot";
 
-                // It produces a jguru string template.
-                //
                 StringTemplate st = gen.toDOT(t, new CommonTreeAdaptor());
 
-                // Create the output file and write the dot spec to it
-                //
                 FileWriter outputStream = new FileWriter(outputName);
                 outputStream.write(st.toString());
                 outputStream.close();
 
-                // Invoke dot to generate a .png file
-                //
                 Process proc = Runtime.getRuntime().exec("dot -Tpng -o" + source + "png " + outputName);
                 proc.waitFor();
             }
 
-            return t;
+            if (compile) {
+                String outputName = source + "java";
+                String className = "Main";
+                Compiler compiler = new Compiler(t, outputName, className);
+                compiler.writeFile();
+            }
+
         } catch (FileNotFoundException ex) {
             System.err.println("\n  !!The file " + source + " does not exist!!\n");
-            return null;
         } catch (Exception ex) {
             System.err.println("Parser threw an exception:\n\n");
             ex.printStackTrace();
         }
-        return null;
     }
 
 }
