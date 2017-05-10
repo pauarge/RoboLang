@@ -91,8 +91,7 @@ class Main {
 
             if (compile) {
                 String outputName = source + "java";
-                String className = "Main";
-                Compiler compiler = new Compiler(t, outputName, className);
+                Compiler compiler = new Compiler(t, outputName);
                 compiler.writeFile();
             }
 

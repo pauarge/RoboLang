@@ -3,6 +3,7 @@ package com.robolang;
 import com.google.googlejavaformat.java.Formatter;
 import com.google.googlejavaformat.java.FormatterException;
 import org.antlr.runtime.tree.Tree;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -14,10 +15,10 @@ public class Compiler {
     private String className;
     private String code;
 
-    public Compiler(Tree t, String path, String className) {
+    public Compiler(Tree t, String path) {
         this.t = t;
         this.path = path;
-        this.className = className;
+        this.className = FilenameUtils.getBaseName(path);
         this.code = "";
     }
 
@@ -42,7 +43,6 @@ public class Compiler {
             System.out.println("Formatting error");
             e.printStackTrace();
         }
-
     }
 
 }
