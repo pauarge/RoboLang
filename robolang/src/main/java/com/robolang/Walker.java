@@ -49,7 +49,7 @@ public class Walker {
                 MethodSpec.Builder func = MethodSpec.methodBuilder(t.getChild(0).getText())
                         .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
                         .returns(getReturn(t));
-                // TODO: Add parameters
+                addParams(t, func);
                 mainClass.addMethod(func.build());
                 break;
         }
@@ -70,12 +70,12 @@ public class Walker {
         }
     }
 
-    private void getParams(Tree t, MethodSpec.Builder func) {
-        assert t.getType() == TParser.PARAMS;
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < t.getChildCount(); i++) {
-            Type type = getType(t.getChild(i));
-            func.addParameter(int.class, t.getChild(i).getText());
+    private void addParams(Tree t, MethodSpec.Builder func) {
+        assert t.getType() == TParser.FUNCTION;
+        Tree params = t.getChild(1);
+        for (int i = 0; i < params.getChildCount(); i++) {
+            Type type = getType(params.getChild(i), t.getChild(2));
+            func.addParameter(type, params.getChild(i).getText());
         }
     }
 
@@ -130,7 +130,11 @@ public class Walker {
     }
 
     private Tree findInTree(String varName, Tree t) {
-        // TODO
+        if (t.getText().equals(varName)) return t;
+        for (int i = 0; i < t.getChildCount(); i++){
+            Tree tmp = findInTree(varName, t.getChild(i));
+            if (tmp != null) return tmp;
+        }
         return null;
     }
 }
