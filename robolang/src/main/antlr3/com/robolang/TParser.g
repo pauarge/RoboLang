@@ -33,7 +33,6 @@ tokens {
     FUNCALL;
     PARAMS;
     COND;
-    PARAMS;
     PREF;
     ARRAY;
     PVALUE;
@@ -68,15 +67,15 @@ array2      :   MR (COMMA! MR)* ;
 
 ident       :   (VAR^ | (DOLLAR^ VAR) | array_expr) ;
 
-func        :   DEF VAR LPAR params RPAR LBRA list_instr ret? RBRA -> ^(FUNCTION VAR params ^(LIST_INSTR list_instr) ret?) ;
+func        :   DEF VAR LPAR params RPAR LBRA list_instr? ret? RBRA -> ^(FUNCTION VAR params ^(LIST_INSTR list_instr)? ret?) ;
 
-ret         :   (RETURN expr SEMI);
+ret         :   (RETURN^ expr SEMI!);
 
 params      :   list_param? -> ^(PARAMS list_param?) ;
 
 list_param  :   param (COMMA! param)* ;
 
-param       :   REF id=VAR -> ^(PREF[$id,$id.text])
+param       :   REF id=VAR-> ^(PREF[$id,$id.text])
             |   id=VAR -> ^(PVALUE[$id,$id.text])
             ;
 
@@ -108,10 +107,10 @@ term        :   factor ( (TIMES^ | DIV^ | MOD^) factor)* ;
 
 factor      :   (ADD^ | SUB^)? atom ;
 
-atom        :   VAR
-            |   funcall
-            |   NUM
+atom        :   NUM
             |   STRING
+            |   VAR
+            |   funcall
             |   array
             |   array_expr
             |   DOLLAR^ VAR

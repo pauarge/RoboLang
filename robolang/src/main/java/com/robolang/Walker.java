@@ -47,22 +47,26 @@ public class Walker {
             case TParser.FUNCTION:
                 MethodSpec.Builder func = MethodSpec.methodBuilder(t.getChild(0).getText())
                         .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
-                        // TODO: .returns(getRetType(child)
-                        .returns(void.class);
+                        .returns(getReturn(t));
                 // TODO: Add parameters
                 mainClass.addMethod(func.build());
                 break;
         }
     }
 
-    private Type getRetType(Tree t) {
-        // TODO: Get return type of a function
-        assert t.getText().equals("FUNCTION");
-        return null;
+    private Type getReturn(Tree t) {
+        assert t.getType() == TParser.FUNCTION;
+        if(t.getChildCount() == 2) return void.class;
+        else if(t.getChildCount() == 3){
+            if(t.getChild(2).getText() == "return") return getType(t.getChild(2).getChild(0));
+            else return void.class;
+        }
+        else {
+            return getType(t.getChild(3).getChild(0));
+        }
     }
 
     private String getParams(Tree t) {
-        // TODO: Get parameters of a function
         assert t.getText().equals("PARAMS");
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < t.getChildCount(); i++) {
