@@ -8,7 +8,6 @@ import org.antlr.runtime.tree.Tree;
 
 import javax.lang.model.element.Modifier;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 
 
 public class Walker {
@@ -58,13 +57,16 @@ public class Walker {
 
     private Type getReturn(Tree t) {
         assert t.getType() == TParser.FUNCTION;
-        if(t.getChildCount() == 2) return void.class;
+        if(t.getChildCount() == 2)
+            return void.class;
         else if(t.getChildCount() == 3){
-            if(t.getChild(2).getText() == "return") return getType(t.getChild(2).getChild(0));
-            else return void.class;
+            if(t.getChild(2).getType() == TParser.RETURN)
+                return getType(t.getChild(2).getChild(0), null);
+            else
+                return void.class;
         }
         else {
-            return getType(t.getChild(3).getChild(0));
+            return getType(t.getChild(3).getChild(0), t.getChild(1));
         }
     }
 
