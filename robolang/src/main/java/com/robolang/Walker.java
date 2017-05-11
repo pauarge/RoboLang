@@ -19,36 +19,31 @@ public class Walker {
     }
 
     public String getCode() {
-        MethodSpec main = MethodSpec.methodBuilder("main")
+        MethodSpec.Builder main = MethodSpec.methodBuilder("main")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(void.class)
-                .addParameter(String[].class, "args")
-                .addStatement("$T.out.println($S)", System.class, "Hello, JavaPoet!")
-                .build();
+                .addParameter(String[].class, "args");
+        writeMain(main);
 
-        TypeSpec mainClass = TypeSpec.classBuilder(className)
+        TypeSpec.Builder mainClass = TypeSpec.classBuilder(className)
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                .addMethod(main)
-                .build();
+                .addMethod(main.build());
+        writeFunctions(mainClass);
 
-        // TODO: Add statements to main
-        // TODO: Add methods to main class
-
-        JavaFile javaFile = JavaFile.builder("com.robolang", mainClass).build();
+        JavaFile javaFile = JavaFile.builder("com.robolang", mainClass.build()).build();
         return javaFile.toString();
     }
 
-    private String writeMain() {
+    private void writeMain(MethodSpec.Builder main) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < root.getChildCount(); i++) {
             Tree child = root.getChild(i);
             if (!child.getText().equals("FUNCTION"))
                 sb.append(getNodeCode(child));
         }
-        return sb.toString();
     }
 
-    private String writeFunctions() {
+    private void writeFunctions(TypeSpec.Builder mainClass) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < root.getChildCount(); i++) {
             Tree child = root.getChild(i);
@@ -59,7 +54,6 @@ public class Walker {
                 sb.append(String.format(tmp, getRetType(child), child.getChild(0), getParams(child.getChild(1))));
             }
         }
-        return sb.toString();
     }
 
     private String getNodeCode(Tree t) {
