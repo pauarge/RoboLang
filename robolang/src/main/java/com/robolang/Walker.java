@@ -1,6 +1,11 @@
 package com.robolang;
 
+import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.TypeSpec;
 import org.antlr.runtime.tree.Tree;
+
+import javax.lang.model.element.Modifier;
 
 
 public class Walker {
@@ -14,13 +19,23 @@ public class Walker {
     }
 
     public String getCode() {
-        String tmp = "public class %s {";
-        tmp += "public static void main(String[] args) {";
-        tmp += writeMain();
-        tmp += "}";
-        tmp += writeFunctions();
-        tmp += "}";
-        return String.format(tmp, className);
+        MethodSpec main = MethodSpec.methodBuilder("main")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .returns(void.class)
+                .addParameter(String[].class, "args")
+                .addStatement("$T.out.println($S)", System.class, "Hello, JavaPoet!")
+                .build();
+
+        TypeSpec mainClass = TypeSpec.classBuilder(className)
+                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                .addMethod(main)
+                .build();
+
+        // TODO: Add statements to main
+        // TODO: Add methods to main class
+
+        JavaFile javaFile = JavaFile.builder("com.robolang", mainClass).build();
+        return javaFile.toString();
     }
 
     private String writeMain() {

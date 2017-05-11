@@ -1,7 +1,5 @@
 package com.robolang;
 
-import com.google.googlejavaformat.java.Formatter;
-import com.google.googlejavaformat.java.FormatterException;
 import org.antlr.runtime.tree.Tree;
 import org.apache.commons.io.FilenameUtils;
 
@@ -37,12 +35,7 @@ public class Compiler {
 
     private void compile() {
         Walker walker = new Walker(t, className);
-        try {
-            code = new Formatter().formatSource(walker.getCode());
-        } catch (FormatterException e) {
-            System.out.println("Formatting error");
-            e.printStackTrace();
-        }
+        code = walker.getCode();
     }
 
 }
