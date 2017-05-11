@@ -66,13 +66,13 @@ public class Walker {
         }
     }
 
-    private String getParams(Tree t) {
-        assert t.getText().equals("PARAMS");
+    private void getParams(Tree t, MethodSpec.Builder func) {
+        assert t.getType() == TParser.PARAMS;
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < t.getChildCount(); i++) {
-
+            Type type = getType(t.getChild(i));
+            func.addParameter(int.class, t.getChild(i).getText());
         }
-        return sb.toString();
     }
 
     private Type getType(Tree t) {
