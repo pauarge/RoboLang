@@ -70,4 +70,8 @@ public class Walker {
         }
         return sb.toString();
     }
+
+    private Type getType(Tree t) {
+        return void.class;
+    }
 }
