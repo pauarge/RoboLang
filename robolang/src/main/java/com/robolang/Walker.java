@@ -1,5 +1,6 @@
 package com.robolang;
 
+import com.squareup.javapoet.ArrayTypeName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
@@ -7,6 +8,7 @@ import org.antlr.runtime.tree.Tree;
 
 import javax.lang.model.element.Modifier;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 
 public class Walker {
@@ -75,7 +77,58 @@ public class Walker {
         }
     }
 
-    private Type getType(Tree t) {
-        return void.class;
+    private Type getType(Tree t0, Tree t1) {
+        switch (t0.getType()) {
+
+            case TLexer.ADD:
+            case TLexer.DIV:
+            case TLexer.MOD:
+            case TLexer.SUB:
+            case TLexer.TIMES:
+                Type tp0 = getType(t0.getChild(0), t1);
+                Type tp1 = getType(t0.getChild(1), t1);
+                assert tp0 == tp1;
+                return tp0;
+
+            case TLexer.AND:
+            case TLexer.EQ:
+            case TLexer.FALSE:
+            case TLexer.GET:
+            case TLexer.GT:
+            case TLexer.LET:
+            case TLexer.LT:
+            case TLexer.NEQ:
+            case TLexer.NOT:
+            case TLexer.OR:
+            case TLexer.TRUE:
+                return boolean.class;
+
+            case TLexer.MR:
+            case TLexer.STRING:
+            case TParser.ARRAY_EXPR:
+                return String.class;
+
+            case TLexer.NUM:
+                return double.class;
+
+            case TLexer.VAR:
+                assert t1 != null;
+                Tree t = findInTree(t0.getText(), t1);
+                return getType(t, null);
+
+            case TParser.ARRAY:
+                return ArrayTypeName.class;
+
+            case TParser.FUNCALL:
+                return getReturn(t0);
+
+            default:
+                return void.class;
+        }
+    }
+
+    private Tree findInTree(String varName, Tree t) {
+        // TODO
+        return null;
     }
 }
