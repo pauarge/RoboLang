@@ -32,16 +32,17 @@ public class Walker {
         mainClass = TypeSpec.classBuilder(className)
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
 
-        getChildCode(mainFunc);
+        getChildCode(root, mainFunc);
         mainClass.addMethod(mainFunc.build());
 
         JavaFile javaFile = JavaFile.builder("com.robolang", mainClass.build()).build();
         return javaFile.toString();
     }
 
-    private void getChildCode(MethodSpec.Builder func) {
-        for (int i = 0; i < root.getChildCount(); i++) {
-            CodeBlock block = getNodeCode(root.getChild(i));
+    private void getChildCode(Tree t, MethodSpec.Builder func) {
+        assert t.getType() == TParser.LIST_INSTR;
+        for (int i = 0; i < t.getChildCount(); i++) {
+            CodeBlock block = getNodeCode(t.getChild(i));
             if (block != null) {
                 func.addStatement(block.toString());
             }
@@ -77,6 +78,8 @@ public class Walker {
                         .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
                         .returns(getReturn(t));
                 addParams(t, f);
+                if (t.getChildCount() > 2 && t.getChild(2).getType() == TParser.LIST_INSTR)
+                    getChildCode(t.getChild(2), f);
                 mainClass.addMethod(f.build());
                 return null;
 
@@ -164,7 +167,7 @@ public class Walker {
     }
 
     private void addParams(Tree t, MethodSpec.Builder func) {
-        assert t.getType() == TParser.LIST_INSTR;
+        assert t.getType() == TParser.FUNCTION;
         Tree params = t.getChild(1);
         for (int i = 0; i < params.getChildCount(); i++) {
             Type type = getType(params.getChild(i), t.getChild(2));
