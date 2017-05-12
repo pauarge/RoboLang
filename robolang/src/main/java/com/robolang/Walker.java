@@ -75,6 +75,16 @@ public class Walker {
                 block.add(")");
                 return block.build();
 
+            case TParser.OR:
+                c0 = getNodeCode(t.getChild(0));
+                c1 = getNodeCode(t.getChild(1));
+                block.add("(");
+                block.add(c0);
+                block.add("||");
+                block.add(c1);
+                block.add(")");
+                return block.build();
+
             case TParser.DIV:
                 c0 = getNodeCode(t.getChild(0));
                 c1 = getNodeCode(t.getChild(1));
@@ -148,6 +158,16 @@ public class Walker {
                 block.add(")");
                 return block.build();
 
+            case TParser.EQ:
+                c0 = getNodeCode(t.getChild(0));
+                c1 = getNodeCode(t.getChild(1));
+                block.add("(");
+                block.add(c0);
+                block.add("==");
+                block.add(c1);
+                block.add(")");
+                return block.build();
+
             case TParser.TIMES:
                 c0 = getNodeCode(t.getChild(0));
                 c1 = getNodeCode(t.getChild(1));
@@ -195,7 +215,6 @@ public class Walker {
                 block.add(c0);
                 block.add(")");
                 return block.build();
-
 
             default:
                 return null;
