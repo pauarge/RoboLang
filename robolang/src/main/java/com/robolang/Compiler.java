@@ -37,9 +37,10 @@ public class Compiler {
 
     private void compile() {
         Walker walker = new Walker(t, className);
-        System.out.println(walker.getCode());
+        String codeAux = walker.getCode();
+        System.out.println(codeAux);
         try {
-            code = new Formatter().formatSource(walker.getCode());
+            code = new Formatter().formatSource(codeAux);
         } catch (FormatterException e) {
             System.out.println("The generated code is not correct");
             e.printStackTrace();

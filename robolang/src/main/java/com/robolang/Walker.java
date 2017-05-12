@@ -5,8 +5,10 @@ import org.antlr.runtime.tree.Tree;
 
 import javax.lang.model.element.Modifier;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 
 public class Walker {
@@ -15,6 +17,7 @@ public class Walker {
     private int ForCount;
     private String className;
     private TypeSpec.Builder mainClass;
+    private Map<String, Type> symTable;
 
     private ClassName lejosButton = ClassName.get("lejos.nxt", "Button");
     private ClassName lejosDelay = ClassName.get("lejos.nxt", "Delay");
@@ -24,6 +27,7 @@ public class Walker {
         ForCount = 0;
         this.root = t;
         this.className = className;
+        this.symTable = new HashMap<>();
         assert root.getText().equals("LIST_INSTR");
     }
 
@@ -121,6 +125,12 @@ public class Walker {
 
             case TParser.ASSIGN:
                 Type type = getType(t.getChild(1), null);
+                String auxName = getFunctionName(t)+"_"+t.getChild(0).getText();
+                boolean firstTime = false;
+                if (!symTable.containsKey(auxName)) {
+                    firstTime = true;
+                    symTable.put(auxName, type);
+                }
                 assert t.getChild(0).getType() == TParser.VAR;
                 if(type == ArrayTypeName.class){
                     block.add("String ");
@@ -129,7 +139,9 @@ public class Walker {
                     block.add(getNodeCode(t.getChild(1)));
                 }
                 else {
-                    block.add(type.toString() + " ");
+                    if(firstTime) {
+                        block.add(type.toString() + " ");
+                    }
                     block.add(t.getChild(0).getText());
                     block.add("=");
                     block.add(getNodeCode(t.getChild(1)));
@@ -350,8 +362,12 @@ public class Walker {
 
             case TParser.VAR:
                 assert t1 != null;
-                Tree t = findInTree(t0.getText(), t1);
-                return getType(t, null);
+                String func = getFunctionName(t0);
+                if(!symTable.containsKey(func + "_" + t0.getText())) {
+                    Tree t = findInTree(t0.getText(), t1);
+                    symTable.put(func + "_" + t0.getText(), getType(t, null));
+                }
+                return symTable.get(func + "_" + t0.getText());
 
             case TParser.ARRAY:
                 return ArrayTypeName.class;
@@ -384,7 +400,7 @@ public class Walker {
         } else {
             list_instr = t.getChild(2);
             return_tree = t.getChild(3);
-            return getType(return_tree.getChild(0), list_instr.getChild(0));
+            return getType(return_tree.getChild(0), list_instr);
         }
     }
 
@@ -410,5 +426,17 @@ public class Walker {
         }
 
         return null;
+    }
+
+    private String getFunctionName(Tree t) {
+        while(t.getParent() != null && t.getType() != TParser.FUNCTION) {
+            t = t.getParent();
+        }
+        if(t.getParent() == null) {
+            return "main";
+        }
+        else {
+            return t.getChild(0).getText();
+        }
     }
 }
