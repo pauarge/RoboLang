@@ -12,6 +12,7 @@ import java.util.Arrays;
 public class Walker {
 
     private Tree root;
+    private int ForCount;
     private String className;
     private TypeSpec.Builder mainClass;
 
@@ -20,6 +21,7 @@ public class Walker {
     private ClassName lejosNXTRegulatedMotor = ClassName.get("lejos.nxt", "NXTRegulatedMotor");
 
     public Walker(Tree t, String className) {
+        ForCount = 0;
         this.root = t;
         this.className = className;
         assert root.getText().equals("LIST_INSTR");
@@ -148,7 +150,7 @@ public class Walker {
                     s =  s + "\"" +t.getChild(i).getText() + "\"";
                 }
                 s += "}";
-                block.addStatement(s);
+                block.add(s);
                 return block.build();
 
 
@@ -252,16 +254,30 @@ public class Walker {
                 block.add(c0);
                 block.add(")");
                 return block.build();
-/**
             case TParser.FOR:
-
+                ++ForCount;
+                String name = "aux_for" + ForCount;
+                block.add(name);
+                block.add("[] =");
+                block.add(getNodeCode(t.getChild(1)));
+                block.beginControlFlow("for (String i: " + name + ")");
+                for(int i = 0; i < t.getChild(2).getChildCount(); ++i) {
+                    block.addStatement(getNodeCode(t.getChild(2).getChild(i)).toString());
+                }
+                block.endControlFlow();
                 return block.build();
 
-                     for(i in [mf-2,mb-5,rh-90]) {
-                     move(i);
-                     x = x + i;
-                     }
-                 */
+            /*for(i in [mf-2,mb-5,rh-90]) {
+                move(i);
+                x = x + i;
+            }*/
+
+
+            /* String aux[] = {...,...};
+            for(String i : aux){
+                move(i);
+                x = x + i;
+              }*/
 
 
             case TParser.RETURN:
