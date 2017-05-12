@@ -64,7 +64,36 @@ public class Walker {
                 return block.build();
 
             case TParser.AND:
-                return null;
+                c0 = getNodeCode(t.getChild(0));
+                c1 = getNodeCode(t.getChild(1));
+                block.add(c0);
+                block.add("&&");
+                block.add(c1);
+                return block.build();
+
+            case TParser.DIV:
+                c0 = getNodeCode(t.getChild(0));
+                c1 = getNodeCode(t.getChild(1));
+                block.add(c0);
+                block.add("/");
+                block.add(c1);
+                return block.build();
+
+            case TParser.GT:
+                c0 = getNodeCode(t.getChild(0));
+                c1 = getNodeCode(t.getChild(1));
+                block.add(c0);
+                block.add(">");
+                block.add(c1);
+                return block.build();
+
+            case TParser.GET:
+                c0 = getNodeCode(t.getChild(0));
+                c1 = getNodeCode(t.getChild(1));
+                block.add(c0);
+                block.add(">=");
+                block.add(c1);
+                return block.build();
 
             case TParser.ASSIGN:
                 Type type = getType(t.getChild(1), null);
