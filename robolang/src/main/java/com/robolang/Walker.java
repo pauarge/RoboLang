@@ -11,7 +11,6 @@ public class Walker {
 
     private Tree root;
     private String className;
-    private MethodSpec.Builder mainFunc;
     private TypeSpec.Builder mainClass;
 
     private ClassName lejosButton = ClassName.get("lejos.nxt", "Button");
@@ -25,35 +24,121 @@ public class Walker {
     }
 
     public String getCode() {
-        mainFunc = MethodSpec.methodBuilder("main")
+        MethodSpec.Builder mainFunc = MethodSpec.methodBuilder("main")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(void.class)
                 .addParameter(String[].class, "args");
-        mainClass = TypeSpec.classBuilder(className)
-                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                .addMethod(mainFunc.build());
 
-        getChildCode();
+        mainClass = TypeSpec.classBuilder(className)
+                .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
+
+        getChildCode(mainFunc);
+        mainClass.addMethod(mainFunc.build());
 
         JavaFile javaFile = JavaFile.builder("com.robolang", mainClass.build()).build();
         return javaFile.toString();
     }
 
-    private void getChildCode() {
+    private void getChildCode(MethodSpec.Builder func) {
         for (int i = 0; i < root.getChildCount(); i++) {
-            getNodeCode(root.getChild(i));
+            CodeBlock block = getNodeCode(root.getChild(i));
+            if (block != null) {
+                func.addStatement(block.toString());
+            }
         }
     }
 
-    private void getNodeCode(Tree t) {
+    private CodeBlock getNodeCode(Tree t) {
+        CodeBlock.Builder block = CodeBlock.builder();
+
         switch (t.getType()) {
+            case TParser.ADD:
+                CodeBlock c0 = getNodeCode(t.getChild(0));
+                CodeBlock c1 = getNodeCode(t.getChild(1));
+                block.add(c0);
+                block.add("+");
+                block.add(c1);
+                return block.build();
+
+            case TParser.AND:
+                return null;
+
+            case TParser.ASSIGN:
+                Type type = getType(t.getChild(1), null);
+                assert t.getChild(0).getType() == TParser.VAR;
+                block.add(type.toString() + " ");
+                block.add(t.getChild(0).getText());
+                block.add("=");
+                block.add(getNodeCode(t.getChild(1)));
+                return block.build();
+
             case TParser.FUNCTION:
-                MethodSpec.Builder func = MethodSpec.methodBuilder(t.getChild(0).getText())
+                MethodSpec.Builder f = MethodSpec.methodBuilder(t.getChild(0).getText())
                         .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
                         .returns(getReturn(t));
-                addParams(t, func);
-                mainClass.addMethod(func.build());
-                break;
+                addParams(t, f);
+                mainClass.addMethod(f.build());
+                return null;
+
+            case TParser.NUM:
+                block.add(t.getText());
+                return block.build();
+
+            default:
+                return null;
+        }
+    }
+
+    private Type getType(Tree t0, Tree t1) {
+        switch (t0.getType()) {
+
+            case TParser.ADD:
+            case TParser.DIV:
+            case TParser.MOD:
+            case TParser.SUB:
+            case TParser.TIMES:
+                Type tp0 = getType(t0.getChild(0), t1);
+                Type tp1 = getType(t0.getChild(1), t1);
+                assert tp0 == tp1;
+                return tp0;
+
+            case TParser.AND:
+            case TParser.EQ:
+            case TParser.FALSE:
+            case TParser.GET:
+            case TParser.GT:
+            case TParser.LET:
+            case TParser.LT:
+            case TParser.NEQ:
+            case TParser.NOT:
+            case TParser.OR:
+            case TParser.TRUE:
+                return boolean.class;
+
+            case TParser.MR:
+            case TParser.STRING:
+            case TParser.ARRAY_EXPR:
+                return String.class;
+
+            case TParser.NUM:
+                return double.class;
+
+            case TParser.VAR:
+                assert t1 != null;
+                Tree t = findInTree(t0.getText(), t1);
+                return getType(t, null);
+
+            case TParser.ARRAY:
+                return ArrayTypeName.class;
+
+            case TParser.FUNCALL:
+                return getReturn(t0);
+
+            case TParser.ASSIGN:
+                return void.class;
+
+            default:
+                return void.class;
         }
     }
 
@@ -87,63 +172,10 @@ public class Walker {
         }
     }
 
-    private Type getType(Tree t0, Tree t1) {
-        switch (t0.getType()) {
-
-            case TLexer.ADD:
-            case TLexer.DIV:
-            case TLexer.MOD:
-            case TLexer.SUB:
-            case TLexer.TIMES:
-                Type tp0 = getType(t0.getChild(0), t1);
-                Type tp1 = getType(t0.getChild(1), t1);
-                assert tp0 == tp1;
-                return tp0;
-
-            case TLexer.AND:
-            case TLexer.EQ:
-            case TLexer.FALSE:
-            case TLexer.GET:
-            case TLexer.GT:
-            case TLexer.LET:
-            case TLexer.LT:
-            case TLexer.NEQ:
-            case TLexer.NOT:
-            case TLexer.OR:
-            case TLexer.TRUE:
-                return boolean.class;
-
-            case TLexer.MR:
-            case TLexer.STRING:
-            case TParser.ARRAY_EXPR:
-                return String.class;
-
-            case TLexer.NUM:
-                return double.class;
-
-            case TLexer.VAR:
-                assert t1 != null;
-                Tree t = findInTree(t0.getText(), t1);
-                return getType(t, null);
-
-            case TParser.ARRAY:
-                return ArrayTypeName.class;
-
-            case TParser.FUNCALL:
-                return getReturn(t0);
-
-            case TLexer.ASSIGN:
-                return void.class;
-
-            default:
-                return void.class;
-        }
-    }
-
     private Tree findInTree(String varName, Tree t) {
-        if (t.getText().equals(varName)){
+        if (t.getText().equals(varName)) {
             // We get an assignation of our variable, we get the tree at which is assigned
-            if(t.getParent().getType() == TLexer.ASSIGN)
+            if (t.getParent().getType() == TParser.ASSIGN)
                 return t.getParent().getChild(1);
         }
 
