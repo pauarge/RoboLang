@@ -1,0 +1,15 @@
+package com.robolang;
+
+import java.lang.String;
+
+public final class test0 {
+  private static double pupu(double a, double b) {
+    double a = 2 + 2;
+    double b = 3;
+  }
+
+  public static void main(String[] args) {
+    double a = 2 + 2;
+    boolean b = 1 > 2 && 4 / 2 >= 2;
+  }
+}
