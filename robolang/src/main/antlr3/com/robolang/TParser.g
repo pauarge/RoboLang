@@ -102,7 +102,7 @@ num_expr    :   term ( (ADD^ | SUB^) term)* ;
 
 term        :   factor ( (TIMES^ | DIV^ | MOD^) factor)* ;
 
-factor      :   (ADD^ | SUB^)? atom ;
+factor      :   (ADD^ | SUB^ | NOT^)? atom ;
 
 atom        :   NUM
             |   STRING

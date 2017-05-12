@@ -9,7 +9,12 @@ public final class test0 {
   }
 
   public static void main(String[] args) {
-    double a = 2 + 2;
-    boolean b = 1 > 2 && 4 / 2 >= 2;
+    boolean a = 0 < 1;
+    boolean a = 0 <= 1;
+    boolean a = 1 != 0;
+    double b = 3 * 3;
+    double b = 4 % 3;
+    double b = 4 - 3;
+    boolean b = !1 > 2 && 4 / 2 >= 2;
   }
 }

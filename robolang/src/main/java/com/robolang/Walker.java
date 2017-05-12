@@ -159,7 +159,9 @@ public class Walker {
                 return block.build();
 
             case TParser.NOT:
+                c0 = getNodeCode(t.getChild(0));
                 block.add("!");
+                block.add(c0);
                 return block.build();
 
             case TParser.NEQ:
