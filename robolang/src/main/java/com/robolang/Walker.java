@@ -1,9 +1,6 @@
 package com.robolang;
 
-import com.squareup.javapoet.ArrayTypeName;
-import com.squareup.javapoet.JavaFile;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.*;
 import org.antlr.runtime.tree.Tree;
 
 import javax.lang.model.element.Modifier;
@@ -11,10 +8,15 @@ import java.lang.reflect.Type;
 
 
 public class Walker {
+
     private Tree root;
     private String className;
     private MethodSpec.Builder mainFunc;
     private TypeSpec.Builder mainClass;
+
+    private ClassName lejosButton = ClassName.get("lejos.nxt", "Button");
+    private ClassName lejosDelay = ClassName.get("lejos.nxt", "Delay");
+    private ClassName lejosNXTRegulatedMotor = ClassName.get("lejos.nxt", "NXTRegulatedMotor");
 
     public Walker(Tree t, String className) {
         this.root = t;
@@ -43,7 +45,7 @@ public class Walker {
         }
     }
 
-    private void getNodeCode(Tree t){
+    private void getNodeCode(Tree t) {
         switch (t.getType()) {
             case TParser.FUNCTION:
                 MethodSpec.Builder func = MethodSpec.methodBuilder(t.getChild(0).getText())
@@ -57,21 +59,27 @@ public class Walker {
 
     private Type getReturn(Tree t) {
         assert t.getType() == TParser.FUNCTION;
-        if(t.getChildCount() == 2)
+        Tree list_instr;
+        Tree return_tree;
+
+        if (t.getChildCount() == 2)
             return void.class;
-        else if(t.getChildCount() == 3){
-            if(t.getChild(2).getType() == TParser.RETURN)
-                return getType(t.getChild(2).getChild(0), null);
-            else
+        else if (t.getChildCount() == 3) {
+            if (t.getChild(2).getType() == TParser.LIST_INSTR) {
                 return void.class;
-        }
-        else {
-            return getType(t.getChild(3).getChild(0), t.getChild(1));
+            } else {
+                return_tree = t.getChild(2);
+                return getType(return_tree.getChild(0), null);
+            }
+        } else {
+            list_instr = t.getChild(2);
+            return_tree = t.getChild(3);
+            return getType(return_tree.getChild(0), list_instr.getChild(0));
         }
     }
 
     private void addParams(Tree t, MethodSpec.Builder func) {
-        assert t.getType() == TParser.FUNCTION;
+        assert t.getType() == TParser.LIST_INSTR;
         Tree params = t.getChild(1);
         for (int i = 0; i < params.getChildCount(); i++) {
             Type type = getType(params.getChild(i), t.getChild(2));
@@ -124,17 +132,26 @@ public class Walker {
             case TParser.FUNCALL:
                 return getReturn(t0);
 
+            case TLexer.ASSIGN:
+                return void.class;
+
             default:
                 return void.class;
         }
     }
 
     private Tree findInTree(String varName, Tree t) {
-        if (t.getText().equals(varName)) return t;
-        for (int i = 0; i < t.getChildCount(); i++){
+        if (t.getText().equals(varName)){
+            // We get an assignation of our variable, we get the tree at which is assigned
+            if(t.getParent().getType() == TLexer.ASSIGN)
+                return t.getParent().getChild(1);
+        }
+
+        for (int i = 0; i < t.getChildCount(); i++) {
             Tree tmp = findInTree(varName, t.getChild(i));
             if (tmp != null) return tmp;
         }
+
         return null;
     }
 }
