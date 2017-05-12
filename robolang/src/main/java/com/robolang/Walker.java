@@ -51,11 +51,13 @@ public class Walker {
 
     private CodeBlock getNodeCode(Tree t) {
         CodeBlock.Builder block = CodeBlock.builder();
+        CodeBlock c0;
+        CodeBlock c1;
 
         switch (t.getType()) {
             case TParser.ADD:
-                CodeBlock c0 = getNodeCode(t.getChild(0));
-                CodeBlock c1 = getNodeCode(t.getChild(1));
+                c0 = getNodeCode(t.getChild(0));
+                c1 = getNodeCode(t.getChild(1));
                 block.add(c0);
                 block.add("+");
                 block.add(c1);
