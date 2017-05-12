@@ -5,6 +5,8 @@ import org.antlr.runtime.tree.Tree;
 
 import javax.lang.model.element.Modifier;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class Walker {
@@ -118,11 +120,37 @@ public class Walker {
             case TParser.ASSIGN:
                 Type type = getType(t.getChild(1), null);
                 assert t.getChild(0).getType() == TParser.VAR;
-                block.add(type.toString() + " ");
-                block.add(t.getChild(0).getText());
-                block.add("=");
-                block.add(getNodeCode(t.getChild(1)));
+                if(type == ArrayTypeName.class){
+                    block.add("String ");
+                    block.add(t.getChild(0).getText() + "[]");
+                    block.add("=");
+                    block.add(getNodeCode(t.getChild(1)));
+                }
+                else {
+                    block.add(type.toString() + " ");
+                    block.add(t.getChild(0).getText());
+                    block.add("=");
+                    block.add(getNodeCode(t.getChild(1)));
+                }
                 return block.build();
+
+            case TParser.ARRAY:
+                int size = t.getChildCount();
+                String s = "{";
+                boolean first = true;
+                for(int i = 0; i < size; ++i) {
+                    if(first) {
+                        first = false;
+                    }
+                    else {
+                        s += ",";
+                    }
+                    s =  s + "\"" +t.getChild(i).getText() + "\"";
+                }
+                s += "}";
+                block.addStatement(s);
+                return block.build();
+
 
             case TParser.FUNCTION:
                 MethodSpec.Builder f = MethodSpec.methodBuilder(t.getChild(0).getText())
@@ -224,6 +252,17 @@ public class Walker {
                 block.add(c0);
                 block.add(")");
                 return block.build();
+/**
+            case TParser.FOR:
+
+                return block.build();
+
+                     for(i in [mf-2,mb-5,rh-90]) {
+                     move(i);
+                     x = x + i;
+                     }
+                 */
+
 
             case TParser.RETURN:
                 block.add("return ");

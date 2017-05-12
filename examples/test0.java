@@ -6,6 +6,7 @@ public final class test0 {
   private static double pupu(double a, double b) {
     double a = (2 + 2);
     double b = 3;
+    return a;
   }
 
   public static void main(String[] args) {
@@ -17,5 +18,7 @@ public final class test0 {
     double b = (4 - 3);
     double x = (((3 * 4.0) - (3 + 3)) + 1);
     boolean b = ((!(1 > 2)) && ((4 / 2) >= 2));
+    String l[] = {"rh-45", "mb-10"};
+    ;
   }
 }
