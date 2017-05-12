@@ -118,6 +118,59 @@ public class Walker {
                 block.add(t.getText());
                 return block.build();
 
+            case TParser.LT:
+                c0 = getNodeCode(t.getChild(0));
+                c1 = getNodeCode(t.getChild(1));
+                block.add(c0);
+                block.add("<");
+                block.add(c1);
+                return block.build();
+
+            case TParser.LET:
+                c0 = getNodeCode(t.getChild(0));
+                c1 = getNodeCode(t.getChild(1));
+                block.add(c0);
+                block.add("<=");
+                block.add(c1);
+                return block.build();
+
+            case TParser.TIMES:
+                c0 = getNodeCode(t.getChild(0));
+                c1 = getNodeCode(t.getChild(1));
+                block.add(c0);
+                block.add("*");
+                block.add(c1);
+                return block.build();
+
+            case TParser.SUB:
+                c0 = getNodeCode(t.getChild(0));
+                c1 = getNodeCode(t.getChild(1));
+                block.add(c1);
+                block.add("-");
+                block.add(c0);
+                return block.build();
+
+            case TParser.MOD:
+                c0 = getNodeCode(t.getChild(0));
+                c1 = getNodeCode(t.getChild(1));
+                block.add(c1);
+                block.add("%");
+                block.add(c0);
+                return block.build();
+
+            case TParser.NOT:
+                block.add("!");
+                return block.build();
+
+            case TParser.NEQ:
+                c0 = getNodeCode(t.getChild(0));
+                c1 = getNodeCode(t.getChild(1));
+                block.add(c1);
+                block.add("!=");
+                block.add(c0);
+                return block.build();
+
+
             default:
                 return null;
         }
