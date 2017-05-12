@@ -129,12 +129,21 @@ public class Walker {
                         .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
                         .returns(getReturn(t));
                 addParams(t, f);
-                if (t.getChildCount() > 2 && t.getChild(2).getType() == TParser.LIST_INSTR)
+                if (t.getChildCount() == 3) {
+                    if (t.getChild(2).getType() == TParser.LIST_INSTR) {
+                        getChildCode(t.getChild(2), f);
+                    } else {
+                        f.addStatement(getNodeCode(t.getChild(2)).toString());
+                    }
+                } else if (t.getChildCount() == 4) {
                     getChildCode(t.getChild(2), f);
+                    f.addStatement(getNodeCode(t.getChild(3)).toString());
+                }
                 mainClass.addMethod(f.build());
                 return null;
 
             case TParser.NUM:
+            case TParser.VAR:
                 block.add(t.getText());
                 return block.build();
 
@@ -214,6 +223,11 @@ public class Walker {
                 block.add("!=");
                 block.add(c0);
                 block.add(")");
+                return block.build();
+
+            case TParser.RETURN:
+                block.add("return ");
+                block.add(getNodeCode(t.getChild(0)));
                 return block.build();
 
             default:
