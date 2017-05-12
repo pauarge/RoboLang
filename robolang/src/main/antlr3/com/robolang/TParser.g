@@ -73,11 +73,8 @@ ret         :   (RETURN^ expr SEMI!);
 
 params      :   list_param? -> ^(PARAMS list_param?) ;
 
-list_param  :   param (COMMA! param)* ;
+list_param  :   VAR (COMMA! VAR)*;
 
-param       :   REF id=VAR-> ^(PREF[$id,$id.text])
-            |   id=VAR -> ^(PVALUE[$id,$id.text])
-            ;
 
 cond        :   cond2 -> ^(COND cond2);
 
