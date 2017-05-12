@@ -18,7 +18,14 @@ public final class test0 {
     double b = (4 - 3);
     double x = (((3 * 4.0) - (3 + 3)) + 1);
     boolean b = ((!(1 > 2)) && ((4 / 2) >= 2));
-    String l[] = {"rh-45", "mb-10"};
+    if ((x > 2) && (y > 3.5)) {
+      double r = (1 + 1);
+      double k = (2 + 3);
+    } else if (k == 2) {
+      double j = 1;
+    } else {
+      double q = (1 + 1);
+    }
     ;
   }
 }

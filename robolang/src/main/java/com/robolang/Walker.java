@@ -269,6 +269,40 @@ public class Walker {
                 block.add(getNodeCode(t.getChild(0)));
                 return block.build();
 
+            case TParser.COND:
+                Tree ifstm = t.getChild(0);
+                CodeBlock cond = getNodeCode(ifstm.getChild(0));
+                block.beginControlFlow("if"+cond);
+                Tree instr = ifstm.getChild(1);
+                for(int i = 0; i < instr.getChildCount(); ++i) {
+                    block.addStatement(getNodeCode(instr.getChild(i)).toString());
+                }
+                block.endControlFlow();
+                int k = 1;
+                while (k < t.getChildCount()) {
+                    if(t.getChild(k).getType() == TParser.ELIF) {
+                        Tree elif = t.getChild(k);
+                        cond = getNodeCode(elif.getChild(0));
+                        block.beginControlFlow("else if" + cond);
+                        instr = elif.getChild(1);
+                        for(int i = 0; i < instr.getChildCount(); ++i) {
+                            block.addStatement(getNodeCode(instr.getChild(i)).toString());
+                        }
+                        block.endControlFlow();
+                    }
+                    else if (t.getChild(k).getType() == TParser.ELSE) {
+                        Tree elstm = t.getChild(k);
+                        block.beginControlFlow("else");
+                        instr = elstm.getChild(0);
+                        for(int i = 0; i < instr.getChildCount(); ++i) {
+                            block.addStatement(getNodeCode(instr.getChild(i)).toString());
+                        }
+                        block.endControlFlow();
+                    }
+                    ++k;
+                }
+                return block.build();
+
             default:
                 return null;
         }
