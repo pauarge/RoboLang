@@ -58,41 +58,51 @@ public class Walker {
             case TParser.ADD:
                 c0 = getNodeCode(t.getChild(0));
                 c1 = getNodeCode(t.getChild(1));
+                block.add("(");
                 block.add(c0);
                 block.add("+");
                 block.add(c1);
+                block.add(")");
                 return block.build();
 
             case TParser.AND:
                 c0 = getNodeCode(t.getChild(0));
                 c1 = getNodeCode(t.getChild(1));
+                block.add("(");
                 block.add(c0);
                 block.add("&&");
                 block.add(c1);
+                block.add(")");
                 return block.build();
 
             case TParser.DIV:
                 c0 = getNodeCode(t.getChild(0));
                 c1 = getNodeCode(t.getChild(1));
+                block.add("(");
                 block.add(c0);
                 block.add("/");
                 block.add(c1);
+                block.add(")");
                 return block.build();
 
             case TParser.GT:
                 c0 = getNodeCode(t.getChild(0));
                 c1 = getNodeCode(t.getChild(1));
+                block.add("(");
                 block.add(c0);
                 block.add(">");
                 block.add(c1);
+                block.add(")");
                 return block.build();
 
             case TParser.GET:
                 c0 = getNodeCode(t.getChild(0));
                 c1 = getNodeCode(t.getChild(1));
+                block.add("(");
                 block.add(c0);
                 block.add(">=");
                 block.add(c1);
+                block.add(")");
                 return block.build();
 
             case TParser.ASSIGN:
@@ -121,55 +131,69 @@ public class Walker {
             case TParser.LT:
                 c0 = getNodeCode(t.getChild(0));
                 c1 = getNodeCode(t.getChild(1));
+                block.add("(");
                 block.add(c0);
                 block.add("<");
                 block.add(c1);
+                block.add(")");
                 return block.build();
 
             case TParser.LET:
                 c0 = getNodeCode(t.getChild(0));
                 c1 = getNodeCode(t.getChild(1));
+                block.add("(");
                 block.add(c0);
                 block.add("<=");
                 block.add(c1);
+                block.add(")");
                 return block.build();
 
             case TParser.TIMES:
                 c0 = getNodeCode(t.getChild(0));
                 c1 = getNodeCode(t.getChild(1));
+                block.add("(");
                 block.add(c0);
                 block.add("*");
                 block.add(c1);
+                block.add(")");
                 return block.build();
 
             case TParser.SUB:
                 c0 = getNodeCode(t.getChild(0));
                 c1 = getNodeCode(t.getChild(1));
+                block.add("(");
                 block.add(c1);
                 block.add("-");
                 block.add(c0);
+                block.add(")");
                 return block.build();
 
             case TParser.MOD:
                 c0 = getNodeCode(t.getChild(0));
                 c1 = getNodeCode(t.getChild(1));
+                block.add("(");
                 block.add(c1);
                 block.add("%");
                 block.add(c0);
+                block.add(")");
                 return block.build();
 
             case TParser.NOT:
                 c0 = getNodeCode(t.getChild(0));
+                block.add("(");
                 block.add("!");
                 block.add(c0);
+                block.add(")");
                 return block.build();
 
             case TParser.NEQ:
                 c0 = getNodeCode(t.getChild(0));
                 c1 = getNodeCode(t.getChild(1));
+                block.add("(");
                 block.add(c1);
                 block.add("!=");
                 block.add(c0);
+                block.add(")");
                 return block.build();
 
 
