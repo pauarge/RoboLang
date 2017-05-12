@@ -12,7 +12,7 @@ b = [rh-45,mf-10];
 if(x < y) {
   for(i in [mf-2,mb-5,rh-90]) {
     move(i);
-    x = x + i;
+    x = 2 +2 ;
   }
 }
 elif (x > y and true) { 

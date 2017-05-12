@@ -257,27 +257,17 @@ public class Walker {
             case TParser.FOR:
                 ++ForCount;
                 String name = "aux_for" + ForCount;
-                block.add(name);
+                block.add("String "+name);
                 block.add("[] =");
                 block.add(getNodeCode(t.getChild(1)));
-                block.beginControlFlow("for (String i: " + name + ")");
+                block.add(";\n");
+                block.beginControlFlow("for (String "+t.getChild(0).getText()+ " : " + name + ")");
                 for(int i = 0; i < t.getChild(2).getChildCount(); ++i) {
                     block.addStatement(getNodeCode(t.getChild(2).getChild(i)).toString());
                 }
                 block.endControlFlow();
                 return block.build();
 
-            /*for(i in [mf-2,mb-5,rh-90]) {
-                move(i);
-                x = x + i;
-            }*/
-
-
-            /* String aux[] = {...,...};
-            for(String i : aux){
-                move(i);
-                x = x + i;
-              }*/
 
 
             case TParser.RETURN:
