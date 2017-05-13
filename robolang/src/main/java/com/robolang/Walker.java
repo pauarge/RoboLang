@@ -5,10 +5,7 @@ import org.antlr.runtime.tree.Tree;
 
 import javax.lang.model.element.Modifier;
 import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 public class Walker {
@@ -92,20 +89,20 @@ public class Walker {
 
             case TParser.ARRAY:
                 int size = t.getChildCount();
-                String s = "{";
+                String s = "Arrays.asList(";
                 boolean first = true;
-                for(int i = 0; i < size; ++i) {
-                    if(first) {
+                for (int i = 0; i < size; ++i) {
+                    if (first) {
                         first = false;
-                    }
-                    else {
+                    } else {
                         s += ",";
                     }
-                    s =  s + "\"" +t.getChild(i).getText() + "\"";
+                    s = s + "\"" + t.getChild(i).getText() + "\"";
                 }
-                s += "}";
+                s += ")";
                 block.add(s);
                 return block.build();
+
 
             case TParser.ASSIGN:
                 Type type = getType(t.getChild(1), null);
@@ -116,10 +113,8 @@ public class Walker {
                     symTable.put(auxName, type);
                 }
                 assert t.getChild(0).getType() == TParser.VAR;
-                if(type == ArrayTypeName.class){
-                    block.add("String ");
-                    block.add(t.getChild(0).getText() + "[]");
-                    block.add("=");
+                if(type == List.class){
+                    block.add("List<String> "+ t.getChild(0).getText() + " = ");
                     block.add(getNodeCode(t.getChild(1)));
                 }
                 else {
@@ -189,12 +184,8 @@ public class Walker {
 
             case TParser.FOR:
                 ++ForCount;
-                String name = "aux_for" + ForCount;
-                block.add("String "+name);
-                block.add("[] =");
-                block.add(getNodeCode(t.getChild(1)));
-                block.add(";\n");
-                block.beginControlFlow("for (String "+t.getChild(0).getText()+ " : " + name + ")");
+                String list = getNodeCode(t.getChild(1)).toString();
+                block.beginControlFlow("for (String "+t.getChild(0).getText()+ " : " + list + ")");
                 for(int i = 0; i < t.getChild(2).getChildCount(); ++i) {
                     block.addStatement(getNodeCode(t.getChild(2).getChild(i)).toString());
                 }
@@ -394,7 +385,7 @@ public class Walker {
                 return symTable.get(func + "_" + t0.getText());
 
             case TParser.ARRAY:
-                return ArrayTypeName.class;
+                return List.class;
 
             case TParser.FUNCALL:
                 return symTable.get("def_"+t0.getChild(0).getText());

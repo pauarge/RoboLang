@@ -23,6 +23,8 @@ for(i in [mf-2,mb-5,rh-90]) {
 }
 index = 0;
 while(index > x and true) {
-   index = index + 1; 
+   index = index + 1;
    loop = true;
 }
+
+res = pupu();
