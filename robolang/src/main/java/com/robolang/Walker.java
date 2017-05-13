@@ -184,6 +184,8 @@ public class Walker {
                 mainClass.addMethod(f.build());
                 return null;
 
+            case TParser.TRUE:
+            case TParser.FALSE:
             case TParser.NUM:
             case TParser.VAR:
                 block.add(t.getText());
@@ -266,6 +268,7 @@ public class Walker {
                 block.add(c0);
                 block.add(")");
                 return block.build();
+
             case TParser.FOR:
                 ++ForCount;
                 String name = "aux_for" + ForCount;
@@ -279,8 +282,6 @@ public class Walker {
                 }
                 block.endControlFlow();
                 return block.build();
-
-
 
             case TParser.RETURN:
                 block.add("return ");
@@ -330,6 +331,7 @@ public class Walker {
                 }
                 block.endControlFlow();
                 return block.build();
+
             default:
                 return null;
         }
