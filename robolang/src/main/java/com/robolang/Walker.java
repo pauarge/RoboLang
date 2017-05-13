@@ -321,6 +321,15 @@ public class Walker {
                 }
                 return block.build();
 
+            case TParser.WHILE:
+                CodeBlock condWhile = getNodeCode(t.getChild(0));
+                block.beginControlFlow("while"+condWhile);
+                Tree instrWhile = t.getChild(1);
+                for(int i = 0; i < instrWhile.getChildCount(); ++i) {
+                    block.addStatement(getNodeCode(instrWhile.getChild(i)).toString());
+                }
+                block.endControlFlow();
+                return block.build();
             default:
                 return null;
         }

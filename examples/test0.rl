@@ -3,7 +3,7 @@
 	return 2 + a;
 }*/
 
-def pupu(a,b){
+def pupu(){
     a = 2+2;
     b = 3;
     return a;
@@ -19,5 +19,9 @@ x = 3+3 - 3 * 4.0 + 1;
 b = not(1 > 2) and (4/2 >= 2);
 l = [rh-45,mb-10];
 for(i in [mf-2,mb-5,rh-90]) {
-x = 2+2;
+    p = 2+x;
+}
+index = 0;
+while(index > x) {
+   index = index + 1; 
 }
