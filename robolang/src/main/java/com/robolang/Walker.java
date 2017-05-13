@@ -63,6 +63,13 @@ public class Walker {
         CodeBlock c1;
 
         switch (t.getType()) {
+            case TParser.TRUE:
+            case TParser.FALSE:
+            case TParser.NUM:
+            case TParser.VAR:
+                block.add(t.getText());
+                return block.build();
+
             case TParser.ADD:
                 c0 = getNodeCode(t.getChild(0));
                 c1 = getNodeCode(t.getChild(1));
@@ -83,44 +90,21 @@ public class Walker {
                 block.add(")");
                 return block.build();
 
-            case TParser.OR:
-                c0 = getNodeCode(t.getChild(0));
-                c1 = getNodeCode(t.getChild(1));
-                block.add("(");
-                block.add(c0);
-                block.add("||");
-                block.add(c1);
-                block.add(")");
-                return block.build();
-
-            case TParser.DIV:
-                c0 = getNodeCode(t.getChild(0));
-                c1 = getNodeCode(t.getChild(1));
-                block.add("(");
-                block.add(c0);
-                block.add("/");
-                block.add(c1);
-                block.add(")");
-                return block.build();
-
-            case TParser.GT:
-                c0 = getNodeCode(t.getChild(0));
-                c1 = getNodeCode(t.getChild(1));
-                block.add("(");
-                block.add(c0);
-                block.add(">");
-                block.add(c1);
-                block.add(")");
-                return block.build();
-
-            case TParser.GET:
-                c0 = getNodeCode(t.getChild(0));
-                c1 = getNodeCode(t.getChild(1));
-                block.add("(");
-                block.add(c0);
-                block.add(">=");
-                block.add(c1);
-                block.add(")");
+            case TParser.ARRAY:
+                int size = t.getChildCount();
+                String s = "{";
+                boolean first = true;
+                for(int i = 0; i < size; ++i) {
+                    if(first) {
+                        first = false;
+                    }
+                    else {
+                        s += ",";
+                    }
+                    s =  s + "\"" +t.getChild(i).getText() + "\"";
+                }
+                s += "}";
+                block.add(s);
                 return block.build();
 
             case TParser.ASSIGN:
@@ -146,146 +130,6 @@ public class Walker {
                     block.add("=");
                     block.add(getNodeCode(t.getChild(1)));
                 }
-                return block.build();
-
-            case TParser.ARRAY:
-                int size = t.getChildCount();
-                String s = "{";
-                boolean first = true;
-                for(int i = 0; i < size; ++i) {
-                    if(first) {
-                        first = false;
-                    }
-                    else {
-                        s += ",";
-                    }
-                    s =  s + "\"" +t.getChild(i).getText() + "\"";
-                }
-                s += "}";
-                block.add(s);
-                return block.build();
-
-
-            case TParser.FUNCTION:
-                MethodSpec.Builder f = MethodSpec.methodBuilder(t.getChild(0).getText())
-                        .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
-                        .returns(getReturn(t));
-                addParams(t, f);
-                if (t.getChildCount() == 3) {
-                    if (t.getChild(2).getType() == TParser.LIST_INSTR) {
-                        getChildCode(t.getChild(2), f);
-                    } else {
-                        f.addStatement(getNodeCode(t.getChild(2)).toString());
-                    }
-                } else if (t.getChildCount() == 4) {
-                    getChildCode(t.getChild(2), f);
-                    f.addStatement(getNodeCode(t.getChild(3)).toString());
-                }
-                mainClass.addMethod(f.build());
-                return null;
-
-            case TParser.TRUE:
-            case TParser.FALSE:
-            case TParser.NUM:
-            case TParser.VAR:
-                block.add(t.getText());
-                return block.build();
-
-            case TParser.LT:
-                c0 = getNodeCode(t.getChild(0));
-                c1 = getNodeCode(t.getChild(1));
-                block.add("(");
-                block.add(c0);
-                block.add("<");
-                block.add(c1);
-                block.add(")");
-                return block.build();
-
-            case TParser.LET:
-                c0 = getNodeCode(t.getChild(0));
-                c1 = getNodeCode(t.getChild(1));
-                block.add("(");
-                block.add(c0);
-                block.add("<=");
-                block.add(c1);
-                block.add(")");
-                return block.build();
-
-            case TParser.EQ:
-                c0 = getNodeCode(t.getChild(0));
-                c1 = getNodeCode(t.getChild(1));
-                block.add("(");
-                block.add(c0);
-                block.add("==");
-                block.add(c1);
-                block.add(")");
-                return block.build();
-
-            case TParser.TIMES:
-                c0 = getNodeCode(t.getChild(0));
-                c1 = getNodeCode(t.getChild(1));
-                block.add("(");
-                block.add(c0);
-                block.add("*");
-                block.add(c1);
-                block.add(")");
-                return block.build();
-
-            case TParser.SUB:
-                c0 = getNodeCode(t.getChild(0));
-                c1 = getNodeCode(t.getChild(1));
-                block.add("(");
-                block.add(c1);
-                block.add("-");
-                block.add(c0);
-                block.add(")");
-                return block.build();
-
-            case TParser.MOD:
-                c0 = getNodeCode(t.getChild(0));
-                c1 = getNodeCode(t.getChild(1));
-                block.add("(");
-                block.add(c1);
-                block.add("%");
-                block.add(c0);
-                block.add(")");
-                return block.build();
-
-            case TParser.NOT:
-                c0 = getNodeCode(t.getChild(0));
-                block.add("(");
-                block.add("!");
-                block.add(c0);
-                block.add(")");
-                return block.build();
-
-            case TParser.NEQ:
-                c0 = getNodeCode(t.getChild(0));
-                c1 = getNodeCode(t.getChild(1));
-                block.add("(");
-                block.add(c1);
-                block.add("!=");
-                block.add(c0);
-                block.add(")");
-                return block.build();
-
-            case TParser.FOR:
-                ++ForCount;
-                String name = "aux_for" + ForCount;
-                block.add("String "+name);
-                block.add("[] =");
-                block.add(getNodeCode(t.getChild(1)));
-                block.add(";\n");
-                block.beginControlFlow("for (String "+t.getChild(0).getText()+ " : " + name + ")");
-                for(int i = 0; i < t.getChild(2).getChildCount(); ++i) {
-                    block.addStatement(getNodeCode(t.getChild(2).getChild(i)).toString());
-                }
-                block.endControlFlow();
-                return block.build();
-
-            case TParser.RETURN:
-                block.add("return ");
-                block.add(getNodeCode(t.getChild(0)));
                 return block.build();
 
             case TParser.COND:
@@ -320,6 +164,162 @@ public class Walker {
                     }
                     ++k;
                 }
+                return block.build();
+
+
+            case TParser.DIV:
+                c0 = getNodeCode(t.getChild(0));
+                c1 = getNodeCode(t.getChild(1));
+                block.add("(");
+                block.add(c0);
+                block.add("/");
+                block.add(c1);
+                block.add(")");
+                return block.build();
+
+            case TParser.EQ:
+                c0 = getNodeCode(t.getChild(0));
+                c1 = getNodeCode(t.getChild(1));
+                block.add("(");
+                block.add(c0);
+                block.add("==");
+                block.add(c1);
+                block.add(")");
+                return block.build();
+
+            case TParser.FOR:
+                ++ForCount;
+                String name = "aux_for" + ForCount;
+                block.add("String "+name);
+                block.add("[] =");
+                block.add(getNodeCode(t.getChild(1)));
+                block.add(";\n");
+                block.beginControlFlow("for (String "+t.getChild(0).getText()+ " : " + name + ")");
+                for(int i = 0; i < t.getChild(2).getChildCount(); ++i) {
+                    block.addStatement(getNodeCode(t.getChild(2).getChild(i)).toString());
+                }
+                block.endControlFlow();
+                return block.build();
+
+            case TParser.FUNCTION:
+                MethodSpec.Builder f = MethodSpec.methodBuilder(t.getChild(0).getText())
+                        .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
+                        .returns(getReturn(t));
+                addParams(t, f);
+                if (t.getChildCount() == 3) {
+                    if (t.getChild(2).getType() == TParser.LIST_INSTR) {
+                        getChildCode(t.getChild(2), f);
+                    } else {
+                        f.addStatement(getNodeCode(t.getChild(2)).toString());
+                    }
+                } else if (t.getChildCount() == 4) {
+                    getChildCode(t.getChild(2), f);
+                    f.addStatement(getNodeCode(t.getChild(3)).toString());
+                }
+                mainClass.addMethod(f.build());
+                return null;
+
+            case TParser.GET:
+                c0 = getNodeCode(t.getChild(0));
+                c1 = getNodeCode(t.getChild(1));
+                block.add("(");
+                block.add(c0);
+                block.add(">=");
+                block.add(c1);
+                block.add(")");
+                return block.build();
+
+            case TParser.GT:
+                c0 = getNodeCode(t.getChild(0));
+                c1 = getNodeCode(t.getChild(1));
+                block.add("(");
+                block.add(c0);
+                block.add(">");
+                block.add(c1);
+                block.add(")");
+                return block.build();
+
+            case TParser.LET:
+                c0 = getNodeCode(t.getChild(0));
+                c1 = getNodeCode(t.getChild(1));
+                block.add("(");
+                block.add(c0);
+                block.add("<=");
+                block.add(c1);
+                block.add(")");
+                return block.build();
+
+            case TParser.LT:
+                c0 = getNodeCode(t.getChild(0));
+                c1 = getNodeCode(t.getChild(1));
+                block.add("(");
+                block.add(c0);
+                block.add("<");
+                block.add(c1);
+                block.add(")");
+                return block.build();
+
+            case TParser.MOD:
+                c0 = getNodeCode(t.getChild(0));
+                c1 = getNodeCode(t.getChild(1));
+                block.add("(");
+                block.add(c1);
+                block.add("%");
+                block.add(c0);
+                block.add(")");
+                return block.build();
+
+            case TParser.NEQ:
+                c0 = getNodeCode(t.getChild(0));
+                c1 = getNodeCode(t.getChild(1));
+                block.add("(");
+                block.add(c1);
+                block.add("!=");
+                block.add(c0);
+                block.add(")");
+                return block.build();
+
+            case TParser.NOT:
+                c0 = getNodeCode(t.getChild(0));
+                block.add("(");
+                block.add("!");
+                block.add(c0);
+                block.add(")");
+                return block.build();
+
+            case TParser.OR:
+                c0 = getNodeCode(t.getChild(0));
+                c1 = getNodeCode(t.getChild(1));
+                block.add("(");
+                block.add(c0);
+                block.add("||");
+                block.add(c1);
+                block.add(")");
+                return block.build();
+
+            case TParser.RETURN:
+                block.add("return ");
+                block.add(getNodeCode(t.getChild(0)));
+                return block.build();
+
+            case TParser.SUB:
+                c0 = getNodeCode(t.getChild(0));
+                c1 = getNodeCode(t.getChild(1));
+                block.add("(");
+                block.add(c1);
+                block.add("-");
+                block.add(c0);
+                block.add(")");
+                return block.build();
+
+            case TParser.TIMES:
+                c0 = getNodeCode(t.getChild(0));
+                c1 = getNodeCode(t.getChild(1));
+                block.add("(");
+                block.add(c0);
+                block.add("*");
+                block.add(c1);
+                block.add(")");
                 return block.build();
 
             case TParser.WHILE:

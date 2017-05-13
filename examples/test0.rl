@@ -22,6 +22,7 @@ for(i in [mf-2,mb-5,rh-90]) {
     p = 2+x;
 }
 index = 0;
-while(index > x) {
+while(index > x and true) {
    index = index + 1; 
+   loop = true;
 }
