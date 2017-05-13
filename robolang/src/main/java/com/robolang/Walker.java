@@ -201,10 +201,22 @@ public class Walker {
                 block.endControlFlow();
                 return block.build();
 
+            case TParser.FUNCALL:
+                String funcall = t.getChild(0).getText()+ "(";
+                int n = t.getChild(1).getChildCount();
+                for(int i = 0; i < n; ++i) {
+                    funcall += t.getChild(1).getChild(i).getText();
+                    if (i != n-1) funcall += ",";
+                }
+                funcall += ")";
+                block.add(funcall);
+                return block.build();
+
             case TParser.FUNCTION:
+                Type func = getReturn(t);
                 MethodSpec.Builder f = MethodSpec.methodBuilder(t.getChild(0).getText())
                         .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
-                        .returns(getReturn(t));
+                        .returns(func);
                 addParams(t, f);
                 if (t.getChildCount() == 3) {
                     if (t.getChild(2).getType() == TParser.LIST_INSTR) {
@@ -217,6 +229,7 @@ public class Walker {
                     f.addStatement(getNodeCode(t.getChild(3)).toString());
                 }
                 mainClass.addMethod(f.build());
+                symTable.put("def_"+t.getChild(0).getText(), func);
                 return null;
 
             case TParser.GET:
@@ -384,7 +397,7 @@ public class Walker {
                 return ArrayTypeName.class;
 
             case TParser.FUNCALL:
-                return getReturn(t0);
+                return symTable.get("def_"+t0.getChild(0).getText());
 
             case TParser.ASSIGN:
                 return void.class;
