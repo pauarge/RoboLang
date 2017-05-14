@@ -9,7 +9,7 @@ def pupu(){
     return a;
 }
 
-/*a = 0 < 1;
+a = 0 < 1;
 a = 0 <= 1;
 a = 0 != 1;
 b = 3*3;
@@ -23,7 +23,7 @@ l = l + [mf-24];
 l = [mf-24] + r;
 l = [rh-2,mf-25] + [mb-10,rh-20];
 k = l + r;
-for(i in [mf-2,mb-5,rh-90]) {
+/*for(i in [mf-2,mb-5,rh-90]) {
     p = 2+x;
 }
 index = 0;
@@ -34,3 +34,6 @@ while(index > x and true) {
 
 res = pupu(a,b);
 move_front(10);
+move_back(14);
+rotate_left(10);
+rotate_right(10);
