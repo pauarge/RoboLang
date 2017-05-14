@@ -18,20 +18,46 @@ public class Functions {
         MethodSpec.Builder move_front = MethodSpec.methodBuilder("move_front")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(void.class)
-                .addParameter(int.class, "units")
-                .addStatement("MXTMotor m1 = new NXTRegulatedMotor(MotorPort.A)")
-                .addStatement("m1.forward()");
+                .addParameter(double.class, "units")
+                .addStatement("NXTRegulatedMotor A = new NXTRegulatedMotor(MotorPort.A)")
+                .addStatement("NXTRegulatedMotor B = new NXTRegulatedMotor(MotorPort.B)")
+                .addStatement("A.rotate(int(units*360))") //Motor dret
+                .addStatement("B.rotate(int(units*360))"); //Motor esquerre
 
         map.put("move_front", move_front);
 
-        MethodSpec.Builder move_back = MethodSpec.methodBuilder("move_front")
+        MethodSpec.Builder move_back = MethodSpec.methodBuilder("move_back")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(void.class)
-                .addParameter(int.class, "units")
-                .addStatement("MXTMotor m1 = new NXTRegulatedMotor(MotorPort.A)")
-                .addStatement("m1.backward()");
+                .addParameter(double.class, "units")
+                .addStatement("NXTRegulatedMotor A = new NXTRegulatedMotor(MotorPort.A)")
+                .addStatement("NXTRegulatedMotor B = new NXTRegulatedMotor(MotorPort.B)")
+                .addStatement("A.rotate(int(-units*360))") //Motor dret
+                .addStatement("B.rotate(int(-units*360))"); //Motor esquerre
 
         map.put("move_back", move_back);
+
+        MethodSpec.Builder rotate_left = MethodSpec.methodBuilder("rotate_left")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .returns(void.class)
+                .addParameter(int.class, "degrees")
+                .addStatement("NXTRegulatedMotor A = new NXTRegulatedMotor(MotorPort.A)")
+                .addStatement("NXTRegulatedMotor B = new NXTRegulatedMotor(MotorPort.B)")
+                .addStatement("A.rotate(degrees)") //Motor dret
+                .addStatement("B.rotate(-degrees)"); //Motor esquerre
+
+        map.put("rotate_left", rotate_left);
+
+        MethodSpec.Builder rotate_right = MethodSpec.methodBuilder("rotate_right")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .returns(void.class)
+                .addParameter(int.class, "degrees")
+                .addStatement("NXTRegulatedMotor A = new NXTRegulatedMotor(MotorPort.A)")
+                .addStatement("NXTRegulatedMotor B = new NXTRegulatedMotor(MotorPort.B)")
+                .addStatement("A.rotate(-degrees)") //Motor dret
+                .addStatement("B.rotate(degrees)"); //Motor esquerre
+
+        map.put("rotate_right", rotate_right);
 
     }
 

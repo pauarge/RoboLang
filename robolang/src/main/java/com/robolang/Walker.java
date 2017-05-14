@@ -29,7 +29,6 @@ public class Walker {
         this.func_creator = new Functions();
         func_creator.run();
         funcMap = new HashMap<>(func_creator.getMap());
-
     }
 
     public String getCode() {
