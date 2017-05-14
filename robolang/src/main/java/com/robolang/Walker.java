@@ -54,10 +54,13 @@ public class Walker {
         }
     }
 
+
+
     private CodeBlock getNodeCode(Tree t) {
         CodeBlock.Builder block = CodeBlock.builder();
         CodeBlock c0;
         CodeBlock c1;
+
 
         switch (t.getType()) {
             case TParser.TRUE:
@@ -68,6 +71,10 @@ public class Walker {
                 return block.build();
 
             case TParser.ADD:
+                if(t.getChild(0).getType() == TParser.ARRAY || symTable.get(getFunctionName(t) + "_" + t.getChild(0).getText()) == List.class){
+                    block.add(t.getParent().getChild(0).getText() + ".addAll(" + getNodeCode(t.getChild(1)) + ")");
+                    return block.build();
+                }
                 c0 = getNodeCode(t.getChild(0));
                 c1 = getNodeCode(t.getChild(1));
                 block.add("(");
@@ -114,8 +121,20 @@ public class Walker {
                 }
                 assert t.getChild(0).getType() == TParser.VAR;
                 if(type == List.class){
-                    block.add("List<String> "+ t.getChild(0).getText() + " = ");
-                    block.add(getNodeCode(t.getChild(1)));
+                    if(firstTime) {
+                        block.add("List<String> "+ t.getChild(0).getText() + " = ");
+                    }
+                    else {
+                        block.add(t.getChild(0).getText() + " = ");
+                    }
+
+                    if(t.getChild(1).getType() == TParser.ARRAY){
+                        block.add(getNodeCode(t.getChild(1)));
+                    }
+                    else {
+                        block.addStatement(getNodeCode(t.getChild(1).getChild(0)).toString());
+                        block.add(getNodeCode(t.getChild(1)));
+                    }
                 }
                 else {
                     if(firstTime) {
@@ -341,6 +360,8 @@ public class Walker {
         }
     }
 
+
+
     private Type getType(Tree t0, Tree t1) {
         switch (t0.getType()) {
 
@@ -402,7 +423,6 @@ public class Walker {
         assert t.getType() == TParser.FUNCTION;
         Tree list_instr;
         Tree return_tree;
-
         if (t.getChildCount() == 2)
             return void.class;
         else if (t.getChildCount() == 3) {
