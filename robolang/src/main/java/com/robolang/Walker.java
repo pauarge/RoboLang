@@ -11,21 +11,25 @@ import java.util.*;
 public class Walker {
 
     private Tree root;
-    private int ForCount;
     private String className;
     private TypeSpec.Builder mainClass;
     private Map<String, Type> symTable;
+    private Functions func_creator;
+    private Map<String, MethodSpec.Builder> funcMap;
 
     private ClassName lejosButton = ClassName.get("lejos.nxt", "Button");
     private ClassName lejosDelay = ClassName.get("lejos.nxt", "Delay");
     private ClassName lejosNXTRegulatedMotor = ClassName.get("lejos.nxt", "NXTRegulatedMotor");
 
     public Walker(Tree t, String className) {
-        ForCount = 0;
         this.root = t;
         this.className = className;
         this.symTable = new HashMap<>();
         assert root.getText().equals("LIST_INSTR");
+        this.func_creator = new Functions();
+        func_creator.run();
+        funcMap = new HashMap<>(func_creator.getMap());
+
     }
 
     public String getCode() {
@@ -201,8 +205,10 @@ public class Walker {
                 block.add(")");
                 return block.build();
 
+            case TParser.DOLLAR:
+                return block.build();
+
             case TParser.FOR:
-                ++ForCount;
                 String list = getNodeCode(t.getChild(1)).toString();
                 block.beginControlFlow("for (String "+t.getChild(0).getText()+ " : " + list + ")");
                 for(int i = 0; i < t.getChild(2).getChildCount(); ++i) {
@@ -220,6 +226,10 @@ public class Walker {
                 }
                 funcall += ")";
                 block.add(funcall);
+                if(funcMap.get(t.getChild(0).getText()) != null) {
+                    mainClass.addMethod(funcMap.get(t.getChild(0).getText()).build());
+                }
+                // If la funció es predefinida afegirla
                 return block.build();
 
             case TParser.FUNCTION:
