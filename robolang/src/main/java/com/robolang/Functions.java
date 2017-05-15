@@ -20,23 +20,22 @@ public class Functions {
         action.returns(void.class);
         action.addStatement("NXTRegulatedMotor A = new NXTRegulatedMotor(MotorPort.A)");
         action.addStatement("NXTRegulatedMotor B = new NXTRegulatedMotor(MotorPort.B)");
-        if(move) {
+        if (move) {
             action.addParameter(double.class, "units");
-            action.addStatement("A.rotate((int)("+direction+"units*360))"); //Motor dret
-            action.addStatement("B.rotate((int)("+direction+"units*360))"); //Motor esquerre
-        }
-        else {
+            action.addStatement("A.rotate((int)(" + direction + "units*360))"); //Motor dret
+            action.addStatement("B.rotate((int)(" + direction + "units*360))"); //Motor esquerre
+        } else {
             action.addParameter(int.class, "degrees");
             String dirAux;
-            if(direction == "-") dirAux = "";
+            if (direction.equals("-")) dirAux = "";
             else dirAux = "-";
-            action.addStatement("A.rotate("+direction+"degrees)");
-            action.addStatement("B.rotate("+dirAux+"degrees)");
+            action.addStatement("A.rotate(" + direction + "degrees)");
+            action.addStatement("B.rotate(" + dirAux + "degrees)");
         }
         map.put(name, action);
     }
 
-    public void run(){
+    public void run() {
 
         MethodSpec.Builder move_front = MethodSpec.methodBuilder("move_front");
         createMethod(move_front, true, "", "move_front");
@@ -51,7 +50,7 @@ public class Functions {
         createMethod(rotate_right, false, "-", "rotate_right");
 
         MethodSpec.Builder asList = MethodSpec.methodBuilder("asList");
-        asList.addCode(    "private List asList(String[] list){ List<String> l = new ArrayList<>(); for(int i = 0; i < list.length; ++i) l.add(list[i]); return l;}");
+        asList.addCode("private List asList(String[] list){ List<String> l = new ArrayList<>(); for(int i = 0; i < list.length; ++i) l.add(list[i]); return l;}");
     }
 
     public Map<String, MethodSpec.Builder> getMap() {
