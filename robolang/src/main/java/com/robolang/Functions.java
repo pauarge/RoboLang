@@ -22,8 +22,8 @@ public class Functions {
         action.addStatement("NXTRegulatedMotor B = new NXTRegulatedMotor(MotorPort.B)");
         if(move) {
             action.addParameter(double.class, "units");
-            action.addStatement("A.rotate(int("+direction+"units*360))"); //Motor dret
-            action.addStatement("B.rotate(int("+direction+"units*360))"); //Motor esquerre
+            action.addStatement("A.rotate((int)("+direction+"units*360))"); //Motor dret
+            action.addStatement("B.rotate((int)("+direction+"units*360))"); //Motor esquerre
         }
         else {
             action.addParameter(int.class, "degrees");

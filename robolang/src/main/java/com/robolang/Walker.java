@@ -216,10 +216,8 @@ public class Walker {
                 return block.build();
 
             case TParser.FUNCTION:
-                Type func = getReturn(t);
                 MethodSpec.Builder f = MethodSpec.methodBuilder(t.getChild(0).getText())
-                        .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
-                        .returns(func);
+                        .addModifiers(Modifier.PRIVATE, Modifier.STATIC);
                 addParams(t, f);
                 if (t.getChildCount() == 3) {
                     if (t.getChild(2).getType() == TParser.LIST_INSTR) {
@@ -231,6 +229,8 @@ public class Walker {
                     getChildCode(t.getChild(2), f);
                     f.addStatement(getNodeCode(t.getChild(3)).toString());
                 }
+                Type func = getReturn(t);
+                f.returns(func);
                 mainClass.addMethod(f.build());
                 symTable.put("def_"+t.getChild(0).getText(), func);
                 return null;
