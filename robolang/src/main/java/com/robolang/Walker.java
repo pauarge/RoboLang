@@ -1,6 +1,5 @@
 package com.robolang;
 
-import antlr.collections.impl.*;
 import com.squareup.javapoet.*;
 import org.antlr.runtime.tree.Tree;
 
@@ -12,7 +11,6 @@ import java.util.Map;
 
 
 public class Walker {
-
     private Tree root;
     private String className;
     private TypeSpec.Builder mainClass;
