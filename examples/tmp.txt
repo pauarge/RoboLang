@@ -1,0 +1,17 @@
+    
+
+
+
+	    //   l = l + [mf-24];     to  
+        //   l = l;  
+        //   l.addAll(Arrays.asList("mf-24"));  1
+        
+        
+        //   l = [rh-2,mf-25] + [mb-10,rh-20];   to    
+        //   l = Arrays.asList("rh-2","mf-25");  2
+        //   l.addAll(Arrays.asList("mb-10","rh-20"));   1
+        
+        
+        //   k = l + r; || l = l + r;  to
+        //   List<String> k = l;
+        //   k.addAll(r);
