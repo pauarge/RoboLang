@@ -4,9 +4,7 @@ package com.robolang;
 import com.squareup.javapoet.MethodSpec;
 
 import javax.lang.model.element.Modifier;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Functions {

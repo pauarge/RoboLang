@@ -3,12 +3,12 @@ package com.robolang;
 import antlr.collections.impl.*;
 import com.squareup.javapoet.*;
 import org.antlr.runtime.tree.Tree;
-import org.openjdk.tools.javac.jvm.Code;
 
 import javax.lang.model.element.Modifier;
 import java.lang.reflect.Type;
-import java.util.*;
-import java.lang.Object;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class Walker {
@@ -19,10 +19,6 @@ public class Walker {
     private Map<String, Type> symTable;
     private Functions func_creator;
     private Map<String, MethodSpec.Builder> funcMap;
-
-    private ClassName lejosButton = ClassName.get("lejos.nxt", "Button");
-    private ClassName lejosDelay = ClassName.get("lejos.nxt", "Delay");
-    private ClassName lejosNXTRegulatedMotor = ClassName.get("lejos.nxt", "NXTRegulatedMotor");
 
     public Walker(Tree t, String className) {
         this.root = t;
@@ -75,9 +71,7 @@ public class Walker {
 
     private CodeBlock getNodeCode(Tree t) {
         CodeBlock.Builder block = CodeBlock.builder();
-        CodeBlock c0;
-        CodeBlock c1;
-
+        CodeBlock c;
 
         switch (t.getType()) {
             case TParser.TRUE:
@@ -102,6 +96,7 @@ public class Walker {
 
 
             case TParser.ASSIGN:
+                assert t.getChild(0).getType() == TParser.VAR;
                 Type type = getType(t.getChild(1), null);
                 String auxName = getFunctionName(t) + "_" + t.getChild(0).getText();
                 boolean firstTime = false;
@@ -109,7 +104,6 @@ public class Walker {
                     firstTime = true;
                     symTable.put(auxName, type);
                 }
-                assert t.getChild(0).getType() == TParser.VAR;
                 if (type == List.class) {
                     if (firstTime) {
                         block.add("List<String> " + t.getChild(0).getText() + " = ");
@@ -239,10 +233,10 @@ public class Walker {
                 return instructionBlock(t, "!=");
 
             case TParser.NOT:
-                c0 = getNodeCode(t.getChild(0));
+                c = getNodeCode(t.getChild(0));
                 block.add("(");
                 block.add("!");
-                block.add(c0);
+                block.add(c);
                 block.add(")");
                 return block.build();
 
