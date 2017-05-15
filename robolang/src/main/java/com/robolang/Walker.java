@@ -7,6 +7,7 @@ import org.openjdk.tools.javac.jvm.Code;
 import javax.lang.model.element.Modifier;
 import java.lang.reflect.Type;
 import java.util.*;
+import java.lang.Object;
 
 
 public class Walker {
@@ -59,7 +60,7 @@ public class Walker {
         }
     }
 
-    private CodeBlock instructionBlock(Tree t, String ins){
+    private CodeBlock instructionBlock(Tree t, String ins) {
         CodeBlock.Builder block = CodeBlock.builder();
         CodeBlock c0 = getNodeCode(t.getChild(0));
         CodeBlock c1 = getNodeCode(t.getChild(1));
@@ -86,7 +87,7 @@ public class Walker {
                 return block.build();
 
             case TParser.ADD:
-                if(t.getChild(0).getType() == TParser.ARRAY || symTable.get(getFunctionName(t) + "_" + t.getChild(0).getText()) == List.class){
+                if (t.getChild(0).getType() == TParser.ARRAY || symTable.get(getFunctionName(t) + "_" + t.getChild(0).getText()) == List.class) {
                     block.add(t.getParent().getChild(0).getText() + ".addAll(" + getNodeCode(t.getChild(1)) + ")");
                     return block.build();
                 }
@@ -96,49 +97,33 @@ public class Walker {
                 return instructionBlock(t, "&&");
 
             case TParser.ARRAY:
-                int size = t.getChildCount();
-                String s = "Arrays.asList(";
-                boolean first = true;
-                for (int i = 0; i < size; ++i) {
-                    if (first) {
-                        first = false;
-                    } else {
-                        s += ",";
-                    }
-                    s = s + "\"" + t.getChild(i).getText() + "\"";
-                }
-                s += ")";
-                block.add(s);
-                return block.build();
+                return null;
 
 
             case TParser.ASSIGN:
                 Type type = getType(t.getChild(1), null);
-                String auxName = getFunctionName(t)+"_"+t.getChild(0).getText();
+                String auxName = getFunctionName(t) + "_" + t.getChild(0).getText();
                 boolean firstTime = false;
                 if (!symTable.containsKey(auxName)) {
                     firstTime = true;
                     symTable.put(auxName, type);
                 }
                 assert t.getChild(0).getType() == TParser.VAR;
-                if(type == List.class){
-                    if(firstTime) {
-                        block.add("List<String> "+ t.getChild(0).getText() + " = ");
-                    }
-                    else {
+                if (type == List.class) {
+                    if (firstTime) {
+                        block.add("List<String> " + t.getChild(0).getText() + " = ");
+                    } else {
                         block.add(t.getChild(0).getText() + " = ");
                     }
 
-                    if(t.getChild(1).getType() == TParser.ARRAY){
+                    if (t.getChild(1).getType() == TParser.ARRAY) {
                         block.add(getNodeCode(t.getChild(1)));
-                    }
-                    else {
+                    } else {
                         block.addStatement(getNodeCode(t.getChild(1).getChild(0)).toString());
                         block.add(getNodeCode(t.getChild(1)));
                     }
-                }
-                else {
-                    if(firstTime) {
+                } else {
+                    if (firstTime) {
                         block.add(type.toString() + " ");
                     }
                     block.add(t.getChild(0).getText());
@@ -150,29 +135,28 @@ public class Walker {
             case TParser.COND:
                 Tree ifstm = t.getChild(0);
                 CodeBlock cond = getNodeCode(ifstm.getChild(0));
-                block.beginControlFlow("if"+cond);
+                block.beginControlFlow("if" + cond);
                 Tree instr = ifstm.getChild(1);
-                for(int i = 0; i < instr.getChildCount(); ++i) {
+                for (int i = 0; i < instr.getChildCount(); ++i) {
                     block.addStatement(getNodeCode(instr.getChild(i)).toString());
                 }
                 block.endControlFlow();
                 int k = 1;
                 while (k < t.getChildCount()) {
-                    if(t.getChild(k).getType() == TParser.ELIF) {
+                    if (t.getChild(k).getType() == TParser.ELIF) {
                         Tree elif = t.getChild(k);
                         cond = getNodeCode(elif.getChild(0));
                         block.beginControlFlow("else if" + cond);
                         instr = elif.getChild(1);
-                        for(int i = 0; i < instr.getChildCount(); ++i) {
+                        for (int i = 0; i < instr.getChildCount(); ++i) {
                             block.addStatement(getNodeCode(instr.getChild(i)).toString());
                         }
                         block.endControlFlow();
-                    }
-                    else if (t.getChild(k).getType() == TParser.ELSE) {
+                    } else if (t.getChild(k).getType() == TParser.ELSE) {
                         Tree elstm = t.getChild(k);
                         block.beginControlFlow("else");
                         instr = elstm.getChild(0);
-                        for(int i = 0; i < instr.getChildCount(); ++i) {
+                        for (int i = 0; i < instr.getChildCount(); ++i) {
                             block.addStatement(getNodeCode(instr.getChild(i)).toString());
                         }
                         block.endControlFlow();
@@ -192,24 +176,24 @@ public class Walker {
                 return block.build();
 
             case TParser.FOR:
-                String list = getNodeCode(t.getChild(1)).toString();
-                block.beginControlFlow("for (String "+t.getChild(0).getText()+ " : " + list + ")");
-                for(int i = 0; i < t.getChild(2).getChildCount(); ++i) {
+                String list2 = getNodeCode(t.getChild(1)).toString();
+                block.beginControlFlow("for (String " + t.getChild(0).getText() + " : " + list2 + ")");
+                for (int i = 0; i < t.getChild(2).getChildCount(); ++i) {
                     block.addStatement(getNodeCode(t.getChild(2).getChild(i)).toString());
                 }
                 block.endControlFlow();
                 return block.build();
 
             case TParser.FUNCALL:
-                String funcall = t.getChild(0).getText()+ "(";
+                String funcall = t.getChild(0).getText() + "(";
                 int n = t.getChild(1).getChildCount();
-                for(int i = 0; i < n; ++i) {
+                for (int i = 0; i < n; ++i) {
                     funcall += t.getChild(1).getChild(i).getText();
-                    if (i != n-1) funcall += ",";
+                    if (i != n - 1) funcall += ",";
                 }
                 funcall += ")";
                 block.add(funcall);
-                if(funcMap.get(t.getChild(0).getText()) != null) {
+                if (funcMap.get(t.getChild(0).getText()) != null) {
                     mainClass.addMethod(funcMap.get(t.getChild(0).getText()).build());
                 }
                 // If la funció es predefinida afegirla
@@ -232,7 +216,7 @@ public class Walker {
                 Type func = getReturn(t);
                 f.returns(func);
                 mainClass.addMethod(f.build());
-                symTable.put("def_"+t.getChild(0).getText(), func);
+                symTable.put("def_" + t.getChild(0).getText(), func);
                 return null;
 
             case TParser.GET:
@@ -277,9 +261,9 @@ public class Walker {
 
             case TParser.WHILE:
                 CodeBlock condWhile = getNodeCode(t.getChild(0));
-                block.beginControlFlow("while"+condWhile);
+                block.beginControlFlow("while" + condWhile);
                 Tree instrWhile = t.getChild(1);
-                for(int i = 0; i < instrWhile.getChildCount(); ++i) {
+                for (int i = 0; i < instrWhile.getChildCount(); ++i) {
                     block.addStatement(getNodeCode(instrWhile.getChild(i)).toString());
                 }
                 block.endControlFlow();
@@ -289,7 +273,6 @@ public class Walker {
                 return null;
         }
     }
-
 
 
     private Type getType(Tree t0, Tree t1) {
@@ -318,7 +301,6 @@ public class Walker {
             case TParser.TRUE:
                 return boolean.class;
 
-            case TParser.MR:
             case TParser.STRING:
             case TParser.ARRAY_EXPR:
                 return String.class;
@@ -329,7 +311,7 @@ public class Walker {
             case TParser.VAR:
                 assert t1 != null;
                 String func = getFunctionName(t0);
-                if(!symTable.containsKey(func + "_" + t0.getText())) {
+                if (!symTable.containsKey(func + "_" + t0.getText())) {
                     Tree t = findInTree(t0.getText(), t1);
                     symTable.put(func + "_" + t0.getText(), getType(t, null));
                 }
@@ -339,7 +321,7 @@ public class Walker {
                 return List.class;
 
             case TParser.FUNCALL:
-                return symTable.get("def_"+t0.getChild(0).getText());
+                return symTable.get("def_" + t0.getChild(0).getText());
 
             case TParser.ASSIGN:
                 return void.class;
@@ -394,13 +376,12 @@ public class Walker {
     }
 
     private String getFunctionName(Tree t) {
-        while(t.getParent() != null && t.getType() != TParser.FUNCTION) {
+        while (t.getParent() != null && t.getType() != TParser.FUNCTION) {
             t = t.getParent();
         }
-        if(t.getParent() == null) {
+        if (t.getParent() == null) {
             return "main";
-        }
-        else {
+        } else {
             return t.getChild(0).getText();
         }
     }

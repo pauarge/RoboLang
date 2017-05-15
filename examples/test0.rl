@@ -23,15 +23,15 @@ l = l + [mf-24];
 l = [mf-24] + r;
 l = [rh-2,mf-25] + [mb-10,rh-20];
 k = l + r;
-/*for(i in [mf-2,mb-5,rh-90]) {
-    p = 2+x;
+for(i in [mf-2,mb-5,rh-90]) {
+    move(i);
 }
 index = 0;
 while(index > x and true) {
    index = index + 1;
    loop = true;
-}*/
-
+}
+move_front(42);
 res = pupu(a,b);
 move_front(10);
 move_back(14);

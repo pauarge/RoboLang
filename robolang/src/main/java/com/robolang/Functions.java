@@ -4,7 +4,9 @@ package com.robolang;
 import com.squareup.javapoet.MethodSpec;
 
 import javax.lang.model.element.Modifier;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Functions {
@@ -49,6 +51,9 @@ public class Functions {
 
         MethodSpec.Builder rotate_right = MethodSpec.methodBuilder("rotate_right");
         createMethod(rotate_right, false, "-", "rotate_right");
+
+        MethodSpec.Builder asList = MethodSpec.methodBuilder("asList");
+        asList.addCode(    "private List asList(String[] list){ List<String> l = new ArrayList<>(); for(int i = 0; i < list.length; ++i) l.add(list[i]); return l;}");
     }
 
     public Map<String, MethodSpec.Builder> getMap() {

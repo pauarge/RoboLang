@@ -63,7 +63,7 @@ array_expr  :   VAR LCOR expr RCOR -> ^(ARRAY_EXPR VAR expr);
 
 array       :   LCOR array2 RCOR -> ^(ARRAY array2);
 
-array2      :   MR (COMMA! MR)* ;
+array2      :   atom (COMMA! atom)* ;
 
 ident       :   (VAR^ | (DOLLAR^ VAR) | array_expr) ;
 
@@ -112,7 +112,6 @@ atom        :   NUM
             |   array_expr
             |   DOLLAR^ VAR
             |   LPAR! expr RPAR!
-            |   MR
             ;
 
 funcall     :   VAR LPAR expr_list? RPAR -> ^(FUNCALL VAR ^(PARAMS expr_list?)) ;
