@@ -12,10 +12,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 
-import com.robolang.TLexer;
-import com.robolang.TParser;
-
-
 class Main {
 
     private static boolean makeDot = false;
@@ -98,7 +94,7 @@ class Main {
         } catch (FileNotFoundException ex) {
             System.err.println("\n  !!The file " + source + " does not exist!!\n");
         } catch (Exception ex) {
-            System.err.println("Parser threw an exception:\n\n");
+            System.err.println("Parser threw an exception:\n");
             ex.printStackTrace();
         }
     }

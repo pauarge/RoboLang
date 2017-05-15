@@ -19,7 +19,6 @@ public class Compiler {
         this.t = t;
         this.path = path;
         this.className = FilenameUtils.getBaseName(path);
-        this.code = "";
     }
 
     public void writeFile() {
