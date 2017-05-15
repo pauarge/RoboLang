@@ -147,13 +147,17 @@ public class Walker {
                 return genInstrBlock(t, "==");
 
             case TParser.DOLLAR:
-                Tree ref = t.getChild(0);
-                Tree func = t.getChild(1);
-                if (ref.getType() == TParser.NUM) {
-
-                } else if (ref.getType() == TParser.STRING) {
-
+                StringBuilder sb = new StringBuilder();
+                sb.append(t.getChild(1).getChild(0).getText());
+                sb.append("("+t.getChild(0).getText());
+                int n = t.getChild(1).getChild(1).getChildCount();
+                for (int i = 0; i < n; ++i) {
+                    if(i == 0) sb.append(",");
+                    sb.append(t.getChild(1).getChild(1).getChild(i).getText());
+                    if (i != n - 1) sb.append(",");
                 }
+                sb.append(")");
+                block.add(sb.toString());
                 return block.build();
 
             case TParser.FOR:
@@ -166,10 +170,10 @@ public class Walker {
                 return block.build();
 
             case TParser.FUNCALL:
-                StringBuilder sb = new StringBuilder();
+                sb = new StringBuilder();
                 sb.append(t.getChild(0).getText());
                 sb.append("(");
-                int n = t.getChild(1).getChildCount();
+                n = t.getChild(1).getChildCount();
                 for (int i = 0; i < n; ++i) {
                     sb.append(t.getChild(1).getChild(i).getText());
                     if (i != n - 1) sb.append(",");

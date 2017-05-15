@@ -55,7 +55,10 @@ instr       :   loop
             |   func
             |   funcall SEMI!
             |   forst
+            |   dollar SEMI!
             ;
+
+dollar      :   DOLLAR^ PORT DOT! funcall;
 
 assign      :   ident ASSIGN expr -> ^(ASSIGN ident expr);
 
@@ -65,7 +68,7 @@ array       :   LCOR array2 RCOR -> ^(ARRAY array2);
 
 array2      :   atom (COMMA! atom)* ;
 
-ident       :   (VAR^ | (DOLLAR^ VAR) | array_expr) ;
+ident       :   (VAR^ | array_expr) ;
 
 func        :   DEF VAR LPAR params RPAR LBRA list_instr? ret? RBRA -> ^(FUNCTION VAR params ^(LIST_INSTR list_instr)? ret?) ;
 
@@ -74,7 +77,6 @@ ret         :   (RETURN^ expr SEMI!);
 params      :   list_param? -> ^(PARAMS list_param?) ;
 
 list_param  :   VAR (COMMA! VAR)*;
-
 
 cond        :   cond2 -> ^(COND cond2);
 
@@ -110,7 +112,6 @@ atom        :   NUM
             |   funcall
             |   array
             |   array_expr
-            |   DOLLAR^ VAR
             |   LPAR! expr RPAR!
             ;
 
