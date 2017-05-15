@@ -16,16 +16,12 @@ public class Walker {
     private String className;
     private TypeSpec.Builder mainClass;
     private Map<String, Type> symTable;
-    private Map<String, MethodSpec.Builder> funcMap;
 
     public Walker(Tree t, String className) {
         this.root = t;
         this.className = className;
         this.symTable = new HashMap<>();
         assert root.getText().equals("LIST_INSTR");
-        Functions functions = new Functions();
-        functions.run();
-        funcMap = new HashMap<>(functions.getMap());
     }
 
     public String getCode() {
@@ -179,10 +175,7 @@ public class Walker {
                 }
                 sb.append(")");
                 block.add(sb.toString());
-                if (funcMap.get(t.getChild(0).getText()) != null) {
-                    mainClass.addMethod(funcMap.get(t.getChild(0).getText()).build());
-                }
-                // If la funció es predefinida afegirla
+
                 return block.build();
 
             case TParser.FUNCTION:

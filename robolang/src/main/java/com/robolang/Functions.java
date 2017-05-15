@@ -15,7 +15,6 @@ public class Functions {
     }
 
     private void createMethod(MethodSpec.Builder action, Boolean move, String direction, String name) {
-
         action.addModifiers(Modifier.PUBLIC, Modifier.STATIC);
         action.returns(void.class);
         action.addStatement("NXTRegulatedMotor A = new NXTRegulatedMotor(MotorPort.A)");
@@ -36,7 +35,6 @@ public class Functions {
     }
 
     public void run() {
-
         MethodSpec.Builder move_front = MethodSpec.methodBuilder("move_front");
         createMethod(move_front, true, "", "move_front");
 
