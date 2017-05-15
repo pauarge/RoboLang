@@ -17,7 +17,6 @@ public class Walker {
     private String className;
     private TypeSpec.Builder mainClass;
     private Map<String, Type> symTable;
-    private Functions func_creator;
     private Map<String, MethodSpec.Builder> funcMap;
 
     public Walker(Tree t, String className) {
@@ -25,11 +24,10 @@ public class Walker {
         this.className = className;
         this.symTable = new HashMap<>();
         assert root.getText().equals("LIST_INSTR");
-        this.func_creator = new Functions();
-        func_creator.run();
-        funcMap = new HashMap<>(func_creator.getMap());
+        Functions functions = new Functions();
+        functions.run();
+        funcMap = new HashMap<>(functions.getMap());
     }
-
 
     public String getCode() {
         MethodSpec.Builder mainFunc = MethodSpec.methodBuilder("main")
@@ -57,18 +55,6 @@ public class Walker {
         }
     }
 
-    private CodeBlock instructionBlock(Tree t, String ins) {
-        CodeBlock.Builder block = CodeBlock.builder();
-        CodeBlock c0 = getNodeCode(t.getChild(0));
-        CodeBlock c1 = getNodeCode(t.getChild(1));
-        block.add("(");
-        block.add(c0);
-        block.add(ins);
-        block.add(c1);
-        block.add(")");
-        return block.build();
-    }
-
     private CodeBlock getNodeCode(Tree t) {
         CodeBlock.Builder block = CodeBlock.builder();
         CodeBlock c;
@@ -86,14 +72,13 @@ public class Walker {
                     block.add(t.getParent().getChild(0).getText() + ".addAll(" + getNodeCode(t.getChild(1)) + ")");
                     return block.build();
                 }
-                return instructionBlock(t, "+");
+                return genInstrBlock(t, "+");
 
             case TParser.AND:
-                return instructionBlock(t, "&&");
+                return genInstrBlock(t, "&&");
 
             case TParser.ARRAY:
                 return null;
-
 
             case TParser.ASSIGN:
                 assert t.getChild(0).getType() == TParser.VAR;
@@ -118,9 +103,8 @@ public class Walker {
                         block.add(getNodeCode(t.getChild(1)));
                     }
                 } else {
-                    if (firstTime) {
+                    if (firstTime)
                         block.add(type.toString() + " ");
-                    }
                     block.add(t.getChild(0).getText());
                     block.add("=");
                     block.add(getNodeCode(t.getChild(1)));
@@ -156,18 +140,24 @@ public class Walker {
                         }
                         block.endControlFlow();
                     }
-                    ++k;
+                    k++;
                 }
                 return block.build();
 
-
             case TParser.DIV:
-                return instructionBlock(t, "/");
+                return genInstrBlock(t, "/");
 
             case TParser.EQ:
-                return instructionBlock(t, "==");
+                return genInstrBlock(t, "==");
 
             case TParser.DOLLAR:
+                Tree ref = t.getChild(0);
+                Tree func = t.getChild(1);
+                if (ref.getType() == TParser.NUM) {
+
+                } else if (ref.getType() == TParser.STRING) {
+
+                }
                 return block.build();
 
             case TParser.FOR:
@@ -180,14 +170,16 @@ public class Walker {
                 return block.build();
 
             case TParser.FUNCALL:
-                String funcall = t.getChild(0).getText() + "(";
+                StringBuilder sb = new StringBuilder();
+                sb.append(t.getChild(0).getText());
+                sb.append("(");
                 int n = t.getChild(1).getChildCount();
                 for (int i = 0; i < n; ++i) {
-                    funcall += t.getChild(1).getChild(i).getText();
-                    if (i != n - 1) funcall += ",";
+                    sb.append(t.getChild(1).getChild(i).getText());
+                    if (i != n - 1) sb.append(",");
                 }
-                funcall += ")";
-                block.add(funcall);
+                sb.append(")");
+                block.add(sb.toString());
                 if (funcMap.get(t.getChild(0).getText()) != null) {
                     mainClass.addMethod(funcMap.get(t.getChild(0).getText()).build());
                 }
@@ -208,40 +200,39 @@ public class Walker {
                     getChildCode(t.getChild(2), f);
                     f.addStatement(getNodeCode(t.getChild(3)).toString());
                 }
-                Type func = getReturn(t);
-                f.returns(func);
+                Type retType = getReturn(t);
+                f.returns(retType);
                 mainClass.addMethod(f.build());
-                symTable.put("def_" + t.getChild(0).getText(), func);
+                symTable.put("def_" + t.getChild(0).getText(), retType);
                 return null;
 
             case TParser.GET:
-                return instructionBlock(t, ">=");
+                return genInstrBlock(t, ">=");
 
             case TParser.GT:
-                return instructionBlock(t, ">");
+                return genInstrBlock(t, ">");
 
             case TParser.LET:
-                return instructionBlock(t, "<=");
+                return genInstrBlock(t, "<=");
 
             case TParser.LT:
-                return instructionBlock(t, "<");
+                return genInstrBlock(t, "<");
 
             case TParser.MOD:
-                return instructionBlock(t, "%");
+                return genInstrBlock(t, "%");
 
             case TParser.NEQ:
-                return instructionBlock(t, "!=");
+                return genInstrBlock(t, "!=");
 
             case TParser.NOT:
                 c = getNodeCode(t.getChild(0));
-                block.add("(");
-                block.add("!");
+                block.add("(!");
                 block.add(c);
                 block.add(")");
                 return block.build();
 
             case TParser.OR:
-                return instructionBlock(t, "||");
+                return genInstrBlock(t, "||");
 
             case TParser.RETURN:
                 block.add("return ");
@@ -249,10 +240,10 @@ public class Walker {
                 return block.build();
 
             case TParser.SUB:
-                return instructionBlock(t, "-");
+                return genInstrBlock(t, "-");
 
             case TParser.TIMES:
-                return instructionBlock(t, "*");
+                return genInstrBlock(t, "*");
 
             case TParser.WHILE:
                 CodeBlock condWhile = getNodeCode(t.getChild(0));
@@ -268,7 +259,6 @@ public class Walker {
                 return null;
         }
     }
-
 
     private Type getType(Tree t0, Tree t1) {
         switch (t0.getType()) {
@@ -379,5 +369,17 @@ public class Walker {
         } else {
             return t.getChild(0).getText();
         }
+    }
+
+    private CodeBlock genInstrBlock(Tree t, String ins) {
+        CodeBlock.Builder block = CodeBlock.builder();
+        CodeBlock c0 = getNodeCode(t.getChild(0));
+        CodeBlock c1 = getNodeCode(t.getChild(1));
+        block.add("(");
+        block.add(c0);
+        block.add(ins);
+        block.add(c1);
+        block.add(")");
+        return block.build();
     }
 }
