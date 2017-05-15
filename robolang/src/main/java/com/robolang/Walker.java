@@ -1,5 +1,6 @@
 package com.robolang;
 
+import antlr.collections.impl.*;
 import com.squareup.javapoet.*;
 import org.antlr.runtime.tree.Tree;
 import org.openjdk.tools.javac.jvm.Code;
