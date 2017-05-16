@@ -4,11 +4,11 @@ import lejos.nxt.*;
 
 public class Common {
 
-    public static void print(String val) {
+    public static void print(String val){
         System.out.println(val);
     }
 
-    public static void print(double val) {
+    public static void print(double val){
         System.out.println(val);
     }
 
@@ -33,7 +33,7 @@ public class Common {
     }
 
     private static NXTRegulatedMotor getMotorPort(String port) {
-        switch (port) {
+        switch (port){
             case "A":
                 return new NXTRegulatedMotor(MotorPort.A);
 
@@ -49,17 +49,17 @@ public class Common {
     }
 
     private static Button getButton(String port) {
-        switch (port) {
-            case "ENTER":
+        switch (port){
+            case "BENTER":
                 return Button.ENTER;
 
-            case "LEFT":
+            case "BLEFT":
                 return Button.LEFT;
 
-            case "RIGHT":
+            case "BRIGHT":
                 return Button.RIGHT;
 
-            case "ESCAPE":
+            case "BESCAPE":
                 return Button.ESCAPE;
 
             default:
@@ -69,21 +69,44 @@ public class Common {
 
     public static void move(String port, double units) {
         NXTRegulatedMotor X = getMotorPort(port);
-        X.rotate((int) units * 360);
+        X.rotate((int) units*360);
     }
 
     public static void waitToBePressed(String port) {
         Button B = getButton(port);
         B.waitForPressAndRelease();
-        LCD.drawString("Finished", 0, 0);
+        LCD.drawString("Finished", 0,0);
     }
 
-    public static void explore(NXTRegulatedMotor A, NXTRegulatedMotor B, NXTRegulatedMotor C, UltrasonicSensor USS, TouchSensor TS) {
+    public static void explore() {
 
     }
 
-    public static void followLine() {
+    public static void followLine(LightSensor L, NXTRegulatedMotor A, NXTRegulatedMotor B) {
+        LCD.clearDisplay();
+        System.out.println("Calibrate white value");
+        System.out.println("Press ENTER to set value");
+        waitToBePressed("ENTER");
+        L.calibrateHigh();
+        LCD.clearDisplay();
+        System.out.println("Calibrate black value");
+        System.out.println("Press ENTER to set value");
+        waitToBePressed("BENTER");
+        L.calibrateLow();
+        while(Button.ESCAPE.isUp()) {
+            A.forward(); //Right
+            while(L.readValue() != L.getHigh());
+            A.stop();
+            B.rotate(30); //Left
+        }
+    }
 
+    public static void shoot(int balls, NXTRegulatedMotor C) {
+        C.setSpeed(C.getMaxSpeed());
+        for(int i = 0; i < balls; ++i) {
+            C.rotate(360);
+        }
+        C.setSpeed(360);
     }
 
 }
