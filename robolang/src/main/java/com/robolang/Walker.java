@@ -1,6 +1,7 @@
 package com.robolang;
 
 import com.squareup.javapoet.*;
+import lejos.nxt.NXTRegulatedMotor;
 import org.antlr.runtime.tree.Tree;
 
 import javax.lang.model.element.Modifier;
@@ -24,13 +25,21 @@ public class Walker {
     }
 
     public String getCode() {
+        ClassName NXTRegulatedMotorClass = ClassName.get("lejos.nxt", "NXTRegulatedMotor");
+        ClassName MotorPortClass = ClassName.get("lejos.nxt", "MotorPort");
+
         MethodSpec.Builder mainFunc = MethodSpec.methodBuilder("main")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(void.class)
                 .addParameter(String[].class, "args");
 
+        FieldSpec leftMotor = FieldSpec.builder(NXTRegulatedMotorClass, "leftMotor")
+                .addModifiers(Modifier.PRIVATE)
+                .initializer("new $T($T.A)", NXTRegulatedMotorClass, MotorPortClass).build();
+
         mainClass = TypeSpec.classBuilder(className)
-                .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
+                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                .addField(leftMotor);
 
         getChildCode(root, mainFunc);
         mainClass.addMethod(mainFunc.build());
