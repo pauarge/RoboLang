@@ -24,22 +24,41 @@ public class Walker {
         assert root.getText().equals("LIST_INSTR");
     }
 
+    private void addField(ClassName Class, ClassName PortClass, String port, TypeSpec.Builder mClass, String varName){
+        FieldSpec fieldSpec = FieldSpec.builder(Class, varName)
+                .addModifiers(Modifier.PRIVATE)
+                .initializer("new $T($T."+port+")", Class, PortClass).build();
+        mClass.addField(fieldSpec);
+    }
+
     public String getCode() {
         ClassName NXTRegulatedMotorClass = ClassName.get("lejos.nxt", "NXTRegulatedMotor");
         ClassName MotorPortClass = ClassName.get("lejos.nxt", "MotorPort");
+        ClassName SensorPortClass = ClassName.get("lejos.nxt", "SensorPort");
+        ClassName TouchSensorClass = ClassName.get("lejos.nxt", "TouchSensor");
+        ClassName LightSensorClass = ClassName.get("lejos.nxt", "LightSensor");
+        ClassName SoundSensorClass = ClassName.get("lejos.nxt", "SoundSensor");
+        ClassName UltrasonicSensorClass = ClassName.get("lejos.nxt", "UltrasonicSensor");
+
 
         MethodSpec.Builder mainFunc = MethodSpec.methodBuilder("main")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(void.class)
                 .addParameter(String[].class, "args");
 
-        FieldSpec leftMotor = FieldSpec.builder(NXTRegulatedMotorClass, "leftMotor")
-                .addModifiers(Modifier.PRIVATE)
-                .initializer("new $T($T.A)", NXTRegulatedMotorClass, MotorPortClass).build();
 
         mainClass = TypeSpec.classBuilder(className)
-                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                .addField(leftMotor);
+                .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
+
+        addField(NXTRegulatedMotorClass, MotorPortClass, "B", mainClass, "leftMotor");
+        addField(NXTRegulatedMotorClass, MotorPortClass, "A", mainClass, "rightMotor");
+        addField(NXTRegulatedMotorClass, MotorPortClass, "C", mainClass, "armMotor");
+        addField(NXTRegulatedMotorClass, MotorPortClass, "C", mainClass, "sensorMotor");
+        addField(NXTRegulatedMotorClass, MotorPortClass, "C", mainClass, "shootMotor");
+        addField(TouchSensorClass, SensorPortClass, "S1", mainClass, "touchSensor");
+        addField(LightSensorClass, SensorPortClass, "S2", mainClass, "lightSensor");
+        addField(SoundSensorClass, SensorPortClass, "S3", mainClass, "lightMotor");
+        addField(UltrasonicSensorClass, SensorPortClass, "S4", mainClass, "ultrasonicMotor");
 
         getChildCode(root, mainFunc);
         mainClass.addMethod(mainFunc.build());
