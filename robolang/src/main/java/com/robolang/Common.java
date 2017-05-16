@@ -4,11 +4,11 @@ import lejos.nxt.*;
 
 public class Common {
 
-    public static void print(String val){
+    public static void print(String val) {
         System.out.println(val);
     }
 
-    public static void print(double val){
+    public static void print(double val) {
         System.out.println(val);
     }
 
@@ -38,6 +38,10 @@ public class Common {
         NXTRegulatedMotor B = new NXTRegulatedMotor(MotorPort.B);
         A.rotate(-degrees);
         B.rotate(degrees);
+    }
+
+    public static void explore() {
+
     }
 
 }
