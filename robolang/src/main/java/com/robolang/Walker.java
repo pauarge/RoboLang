@@ -57,8 +57,8 @@ public class Walker {
         addField(NXTRegulatedMotorClass, MotorPortClass, "C", mainClass, "shootMotor");
         addField(TouchSensorClass, SensorPortClass, "S1", mainClass, "touchSensor");
         addField(LightSensorClass, SensorPortClass, "S2", mainClass, "lightSensor");
-        addField(SoundSensorClass, SensorPortClass, "S3", mainClass, "lightMotor");
-        addField(UltrasonicSensorClass, SensorPortClass, "S4", mainClass, "ultrasonicMotor");
+        addField(SoundSensorClass, SensorPortClass, "S3", mainClass, "soundSensor");
+        addField(UltrasonicSensorClass, SensorPortClass, "S4", mainClass, "ultrasonicSensor");
 
         getChildCode(root, mainFunc);
         mainClass.addMethod(mainFunc.build());
