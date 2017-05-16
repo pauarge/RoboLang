@@ -19,50 +19,38 @@ class Main {
     private static TLexer lexer;
 
     public static void main(String[] args) {
-        try {
-            lexer = new TLexer();
+        lexer = new TLexer();
+        if (args.length > 0) {
+            int s = 0;
 
-            if (args.length > 0) {
-                int s = 0;
-
-                if (args[0].startsWith("-dot")) {
-                    makeDot = true;
-                    s = 1;
-                }
-
-                if (args[s].startsWith("-nocompile")) {
-                    compile = false;
-                    s += 1;
-                }
-
-                parse(new File(args[s]));
-
-            } else {
-                System.err.println("Usage: java -jar robolang-1.0-jar-with-dependencies.jar <directory | filename.rl>");
+            if (args[0].startsWith("-dot")) {
+                makeDot = true;
+                s = 1;
             }
-        } catch (Exception ex) {
-            System.err.println("Robolang parser threw exception:");
-            ex.printStackTrace();
+
+            if (args[s].startsWith("-nocompile")) {
+                compile = false;
+                s += 1;
+            }
+
+            parse(new File(args[s]));
+
+        } else {
+            System.err.println("Usage: java -jar robolang-1.0-jar-with-dependencies.jar <directory | filename.rl>");
         }
     }
 
-    private static void parse(File source) throws Exception {
-        try {
-            String sourceFile = source.getName();
-
-            if (sourceFile.length() > 3) {
-                String suffix = sourceFile.substring(sourceFile.length() - 3).toLowerCase();
-                if (suffix.compareTo(".rl") == 0) {
-                    parseSource(source.getAbsolutePath());
-                }
+    private static void parse(File source) {
+        String sourceFile = source.getName();
+        if (sourceFile.length() > 3) {
+            String suffix = sourceFile.substring(sourceFile.length() - 3).toLowerCase();
+            if (suffix.compareTo(".rl") == 0) {
+                parseSource(source.getAbsolutePath());
             }
-        } catch (Exception ex) {
-            System.err.println("Robolang parser caught error on file open:");
-            ex.printStackTrace();
         }
     }
 
-    private static void parseSource(String source) throws Exception {
+    private static void parseSource(String source) {
         try {
             lexer.setCharStream(new ANTLRFileStream(source, "UTF8"));
             CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -94,8 +82,7 @@ class Main {
         } catch (FileNotFoundException ex) {
             System.err.println("\n  !!The file " + source + " does not exist!!\n");
         } catch (Exception ex) {
-            System.err.println("Parser threw an exception:\n");
-            ex.printStackTrace();
+            System.err.println("Could not compile the file.");
         }
     }
 
