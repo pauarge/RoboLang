@@ -3,11 +3,12 @@
 	return 2 + a;
 }*/
 
-def pupu(){
-    a = 2+2;
-    b = 3;
-    return a;
+def pupu(a, b){
+    return a+b;
 }
+
+$S1.move_front(10);
+
 
 move_front(42);
 res = pupu(a,b);
