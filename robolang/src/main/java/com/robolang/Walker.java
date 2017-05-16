@@ -175,10 +175,10 @@ public class Walker {
             case TParser.DOLLAR:
                 StringBuilder sb = new StringBuilder();
                 sb.append(t.getChild(1).getChild(0).getText());
-                sb.append("("+t.getChild(0).getText());
+                sb.append("(" + t.getChild(0).getText());
                 int n = t.getChild(1).getChild(1).getChildCount();
                 for (int i = 0; i < n; ++i) {
-                    if(i == 0) sb.append(",");
+                    if (i == 0) sb.append(",");
                     sb.append(t.getChild(1).getChild(1).getChild(i).getText());
                     if (i != n - 1) sb.append(",");
                 }
@@ -198,20 +198,57 @@ public class Walker {
             case TParser.FUNCALL:
                 sb = new StringBuilder();
                 String funcname = t.getChild(0).getText();
-                for(CommonMethods m : CommonMethods.values()){
-                    if(m.name().equals(funcname)){
-                        sb.append("Common.");
-                        break;
+                if (funcname.equals("setDefault")) {
+                    Tree sdParams = t.getChild(1);
+                    String portName = sdParams.getChild(0).getText();
+                    String port = sdParams.getChild(1).getText();
+                    portName = portName.substring(1, portName.length() - 1);
+                    port = port.substring(1, port.length() - 1);
+                    switch (portName) {
+                        case "leftMotor":
+                            sb.append("leftMotor = new NXTRegulatedMotor(MotorPort." + port + ")");
+                            break;
+                        case "rightMotor":
+                            sb.append("rightMotor = new NXTRegulatedMotor(MotorPort." + port + ")");
+                            break;
+                        case "armMotor":
+                            sb.append("armMotor = new NXTRegulatedMotor(MotorPort." + port + ")");
+                            break;
+                        case "sensorMotor":
+                            sb.append("sensorMotor = new NXTRegulatedMotor(MotorPort." + port + ")");
+                            break;
+                        case "shootMotor":
+                            sb.append("shootMotor = new NXTRegulatedMotor(MotorPort." + port + ")");
+                            break;
+                        case "touchSensor":
+                            sb.append("touchSensor = new TouchSensor(SensorPort." + port + ")");
+                            break;
+                        case "lightSensor":
+                            sb.append("lightSensor = new LightSensor(SensorPort." + port + ")");
+                            break;
+                        case "soundSensor":
+                            sb.append("soundSensor = new SoundSensor(SensorPort." + port + ")");
+                            break;
+                        case "ultrasonicSensor":
+                            sb.append("ultrasonicSensor = new UltrasonicSensor(SensorPort." + port + ")");
+                            break;
                     }
+                } else {
+                    for (CommonMethods m : CommonMethods.values()) {
+                        if (m.name().equals(funcname)) {
+                            sb.append("Common.");
+                            break;
+                        }
+                    }
+                    sb.append(funcname);
+                    sb.append("(");
+                    n = t.getChild(1).getChildCount();
+                    for (int i = 0; i < n; ++i) {
+                        sb.append(t.getChild(1).getChild(i).getText());
+                        if (i != n - 1) sb.append(",");
+                    }
+                    sb.append(")");
                 }
-                sb.append(funcname);
-                sb.append("(");
-                n = t.getChild(1).getChildCount();
-                for (int i = 0; i < n; ++i) {
-                    sb.append(t.getChild(1).getChild(i).getText());
-                    if (i != n - 1) sb.append(",");
-                }
-                sb.append(")");
                 block.add(sb.toString());
                 return block.build();
 
