@@ -56,7 +56,10 @@ instr       :   loop
             |   funcall SEMI!
             |   forst
             |   dollar SEMI!
+            |   importst SEMI!
             ;
+
+importst    :   IMPORT^ VAR ;
 
 dollar      :   DOLLAR^ PORT DOT! funcall;
 

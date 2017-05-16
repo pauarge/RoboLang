@@ -19,6 +19,7 @@ FOR     :   'for';
 IN      :   'in';
 WHILE   :   'while';
 IF      :   'if';
+IMPORT  :   'import';
 ELIF    :   'elif';
 ELSE    :   'else';
 RETURN  :   'return';

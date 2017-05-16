@@ -4,11 +4,11 @@ import lejos.nxt.*;
 
 public class Common {
 
-    public static void print(String val){
+    public static void print(String val) {
         System.out.println(val);
     }
 
-    public static void print(double val){
+    public static void print(double val) {
         System.out.println(val);
     }
 
@@ -33,7 +33,7 @@ public class Common {
     }
 
     private static NXTRegulatedMotor getMotorPort(String port) {
-        switch (port){
+        switch (port) {
             case "A":
                 return new NXTRegulatedMotor(MotorPort.A);
 
@@ -49,7 +49,7 @@ public class Common {
     }
 
     private static Button getButton(String port) {
-        switch (port){
+        switch (port) {
             case "ENTER":
                 return Button.ENTER;
 
@@ -69,16 +69,16 @@ public class Common {
 
     public static void move(String port, double units) {
         NXTRegulatedMotor X = getMotorPort(port);
-        X.rotate((int) units*360);
+        X.rotate((int) units * 360);
     }
 
     public static void waitToBePressed(String port) {
         Button B = getButton(port);
         B.waitForPressAndRelease();
-        LCD.drawString("Finished", 0,0);
+        LCD.drawString("Finished", 0, 0);
     }
 
-    public static void explore() {
+    public static void explore(NXTRegulatedMotor A, NXTRegulatedMotor B, NXTRegulatedMotor C, UltrasonicSensor USS, TouchSensor TS) {
 
     }
 

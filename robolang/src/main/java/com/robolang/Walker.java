@@ -1,7 +1,6 @@
 package com.robolang;
 
 import com.squareup.javapoet.*;
-import lejos.nxt.NXTRegulatedMotor;
 import org.antlr.runtime.tree.Tree;
 
 import javax.lang.model.element.Modifier;
@@ -277,6 +276,10 @@ public class Walker {
 
             case TParser.GT:
                 return genInstrBlock(t, ">");
+
+            case TParser.IMPORT:
+                // TODO: Import
+                return null;
 
             case TParser.LET:
                 return genInstrBlock(t, "<=");
