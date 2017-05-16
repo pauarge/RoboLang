@@ -22,19 +22,15 @@ class Main {
         lexer = new TLexer();
         if (args.length > 0) {
             int s = 0;
-
             if (args[0].startsWith("-dot")) {
                 makeDot = true;
                 s = 1;
             }
-
             if (args[s].startsWith("-nocompile")) {
                 compile = false;
                 s += 1;
             }
-
             parse(new File(args[s]));
-
         } else {
             System.err.println("Usage: java -jar robolang-1.0-jar-with-dependencies.jar <directory | filename.rl>");
         }
@@ -54,7 +50,6 @@ class Main {
         try {
             lexer.setCharStream(new ANTLRFileStream(source, "UTF8"));
             CommonTokenStream tokens = new CommonTokenStream(lexer);
-
             TParser parser = new TParser(tokens);
             Tree t = (Tree) parser.prog().getTree();
             source = source.substring(0, source.length() - 2);
@@ -78,7 +73,6 @@ class Main {
                 Compiler compiler = new Compiler(t, outputName);
                 compiler.writeFile();
             }
-
         } catch (FileNotFoundException ex) {
             System.err.println("\n  !!The file " + source + " does not exist!!\n");
         } catch (Exception ex) {

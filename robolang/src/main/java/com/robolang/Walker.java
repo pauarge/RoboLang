@@ -169,7 +169,14 @@ public class Walker {
 
             case TParser.FUNCALL:
                 sb = new StringBuilder();
-                sb.append(t.getChild(0).getText());
+                String funcname = t.getChild(0).getText();
+                for(CommonMethods m : CommonMethods.values()){
+                    if(m.name().equals(funcname)){
+                        sb.append("Common.");
+                        break;
+                    }
+                }
+                sb.append(funcname);
                 sb.append("(");
                 n = t.getChild(1).getChildCount();
                 for (int i = 0; i < n; ++i) {
@@ -178,7 +185,6 @@ public class Walker {
                 }
                 sb.append(")");
                 block.add(sb.toString());
-
                 return block.build();
 
             case TParser.FUNCTION:
@@ -257,7 +263,6 @@ public class Walker {
 
     private Type getType(Tree t0, Tree t1) {
         switch (t0.getType()) {
-
             case TParser.ADD:
             case TParser.DIV:
             case TParser.MOD:
@@ -293,7 +298,11 @@ public class Walker {
                 String func = getFunctionName(t0);
                 if (!symTable.containsKey(func + "_" + t0.getText())) {
                     Tree t = findInTree(t0.getText(), t1);
-                    symTable.put(func + "_" + t0.getText(), getType(t, null));
+                    if (t == null) {
+                        symTable.put(func + "_" + t0.getText(), double.class);
+                    } else {
+                        symTable.put(func + "_" + t0.getText(), getType(t, null));
+                    }
                 }
                 return symTable.get(func + "_" + t0.getText());
 

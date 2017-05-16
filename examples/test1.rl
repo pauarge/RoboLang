@@ -1,9 +1,7 @@
-x = 2;
-a = [mf-10,mb-3.4,ra-3,rh-25];
-l = a[x];
-for (i in a) {
-    move(i);
+def sayHello() {
+    print("Hello");
 }
-for(i in [rh-2,mf-4,ra-2]){
-    move(i);
-}
+
+x = 2 + 2;
+move_front(x);
+sayHello();
