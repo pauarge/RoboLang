@@ -25,7 +25,7 @@ public class Walker {
 
     private void addField(ClassName Class, ClassName PortClass, String port, TypeSpec.Builder mClass, String varName){
         FieldSpec fieldSpec = FieldSpec.builder(Class, varName)
-                .addModifiers(Modifier.PRIVATE)
+                .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
                 .initializer("new $T($T."+port+")", Class, PortClass).build();
         mClass.addField(fieldSpec);
     }
