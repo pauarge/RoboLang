@@ -1,6 +1,7 @@
 package com.robolang;
 
 import com.squareup.javapoet.*;
+import lejos.robotics.navigation.DifferentialPilot;
 import org.antlr.runtime.tree.Tree;
 
 import javax.lang.model.element.Modifier;
@@ -38,12 +39,17 @@ public class Walker {
         ClassName LightSensorClass = ClassName.get("lejos.nxt", "LightSensor");
         ClassName SoundSensorClass = ClassName.get("lejos.nxt", "SoundSensor");
         ClassName UltrasonicSensorClass = ClassName.get("lejos.nxt", "UltrasonicSensor");
+        ClassName DifferentialPilotClass = ClassName.get("lejos.robotics.navigation", "DifferentialPilot");
 
 
         MethodSpec.Builder mainFunc = MethodSpec.methodBuilder("main")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(void.class)
                 .addParameter(String[].class, "args");
+
+        FieldSpec diffPilot = FieldSpec.builder(DifferentialPilotClass, "pilot")
+                .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
+                .initializer("new $T(4.0f,13.4f,rightMotor,leftMotor)", DifferentialPilotClass).build();
 
 
         mainClass = TypeSpec.classBuilder(className)
@@ -58,7 +64,7 @@ public class Walker {
         addField(LightSensorClass, SensorPortClass, "S2", mainClass, "lightSensor");
         addField(SoundSensorClass, SensorPortClass, "S3", mainClass, "soundSensor");
         addField(UltrasonicSensorClass, SensorPortClass, "S4", mainClass, "ultrasonicSensor");
-
+        mainClass.addField(diffPilot);
         getChildCode(root, mainFunc);
         mainClass.addMethod(mainFunc.build());
 
@@ -248,12 +254,12 @@ public class Walker {
                     }
                     if(funcname.equals("move_back") || funcname.equals("move_front") || funcname.equals("rotate_left")
                             || funcname.equals("rotate_right")){
-                        sb.append(", rightMotor, leftMotor");
+                        sb.append(", pilot");
                     }
                     else if(funcname.equals("shoot")){
                         sb.append(", shootMotor");
                     }
-                    else if(funcname.equals("follow_line")){
+                    else if(funcname.equals("followLine")){
                         sb.append("lightSensor, rightMotor, leftMotor");
                     }
                     sb.append(")");

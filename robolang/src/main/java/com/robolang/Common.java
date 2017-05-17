@@ -1,6 +1,7 @@
 package com.robolang;
 
 import lejos.nxt.*;
+import lejos.robotics.navigation.DifferentialPilot;
 
 public class Common {
 
@@ -12,54 +13,42 @@ public class Common {
         System.out.println(val);
     }
 
-    public static void move_front(double units, NXTRegulatedMotor A, NXTRegulatedMotor B) {
-        A.rotate((int) (units * 360));
-        B.rotate((int) (units * 360));
+    public static void move_front(double units, DifferentialPilot pilot) {
+        pilot.travel(units);
     }
 
-    public static void move_back(double units, NXTRegulatedMotor A, NXTRegulatedMotor B) {
-        A.rotate((int) (-units * 360));
-        B.rotate((int) (-units * 360));
+    public static void move_back(double units, DifferentialPilot pilot) {
+        pilot.travel(-units);
     }
 
-    public static void rotate_left(int degrees, NXTRegulatedMotor A, NXTRegulatedMotor B) {
-        A.rotate(degrees);
-        B.rotate(-degrees);
+    public static void rotate_left(int degrees, DifferentialPilot pilot) {
+        pilot.rotate((double)-degrees);
     }
 
-    public static void rotate_right(int degrees, NXTRegulatedMotor A, NXTRegulatedMotor B) {
-        A.rotate(-degrees);
-        B.rotate(degrees);
+    public static void rotate_right(int degrees, DifferentialPilot pilot) {
+        pilot.rotate((double)degrees);
     }
 
     private static NXTRegulatedMotor getMotorPort(String port) {
-        switch (port){
-            case "A":
-                return new NXTRegulatedMotor(MotorPort.A);
 
-            case "B":
-                return new NXTRegulatedMotor(MotorPort.B);
-
-            case "C":
-                return new NXTRegulatedMotor(MotorPort.C);
-
-            default:
-                return null;
-        }
+        if(port.equals("A")) return new NXTRegulatedMotor(MotorPort.A);
+        else if(port.equals("B")) return new NXTRegulatedMotor(MotorPort.B);
+        else if(port.equals("C")) return new NXTRegulatedMotor(MotorPort.C);
+        else return null;
     }
 
-    private static Button getButton(String port) {
-        switch (port){
-            case "BENTER":
+    private static Button getButton(int id) {
+        switch (id){
+            case Button.ID_ENTER:
                 return Button.ENTER;
 
-            case "BLEFT":
+            case Button.ID_LEFT:
                 return Button.LEFT;
 
-            case "BRIGHT":
+            case Button.ID_RIGHT:
                 return Button.RIGHT;
 
-            case "BESCAPE":
+            case Button.ID_ESCAPE:
                 return Button.ESCAPE;
 
             default:
@@ -72,8 +61,8 @@ public class Common {
         X.rotate((int) units*360);
     }
 
-    public static void waitToBePressed(String port) {
-        Button B = getButton(port);
+    public static void waitToBePressed(int id) {
+        Button B = getButton(id);
         B.waitForPressAndRelease();
         LCD.drawString("Finished", 0,0);
     }
@@ -86,12 +75,12 @@ public class Common {
         LCD.clearDisplay();
         System.out.println("Calibrate white value");
         System.out.println("Press ENTER to set value");
-        waitToBePressed("ENTER");
+        waitToBePressed(Button.ID_ENTER);
         L.calibrateHigh();
         LCD.clearDisplay();
         System.out.println("Calibrate black value");
         System.out.println("Press ENTER to set value");
-        waitToBePressed("BENTER");
+        waitToBePressed(Button.ID_ENTER);
         L.calibrateLow();
         while(Button.ESCAPE.isUp()) {
             A.forward(); //Right
