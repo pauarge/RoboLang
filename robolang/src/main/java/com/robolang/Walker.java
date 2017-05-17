@@ -246,6 +246,16 @@ public class Walker {
                         sb.append(t.getChild(1).getChild(i).getText());
                         if (i != n - 1) sb.append(",");
                     }
+                    if(funcname.equals("move_back") || funcname.equals("move_front") || funcname.equals("rotate_left")
+                            || funcname.equals("rotate_right")){
+                        sb.append(", rightMotor, leftMotor");
+                    }
+                    else if(funcname.equals("shoot")){
+                        sb.append(", shootMotor");
+                    }
+                    else if(funcname.equals("follow_line")){
+                        sb.append("lightSensor, rightMotor, leftMotor");
+                    }
                     sb.append(")");
                 }
                 block.add(sb.toString());
@@ -277,9 +287,9 @@ public class Walker {
             case TParser.GT:
                 return genInstrBlock(t, ">");
 
-            case TParser.IMPORT:
+            //case TParser.IMPORT:
                 // TODO: Import
-                return null;
+              //  return null;
 
             case TParser.LET:
                 return genInstrBlock(t, "<=");
