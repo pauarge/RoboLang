@@ -1,10 +1,14 @@
 package com.robolang;
 
 import com.squareup.javapoet.*;
+import org.antlr.runtime.ANTLRFileStream;
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.RecognitionException;
 import lejos.robotics.navigation.DifferentialPilot;
 import org.antlr.runtime.tree.Tree;
 
 import javax.lang.model.element.Modifier;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
@@ -14,20 +18,22 @@ import java.util.Map;
 public class Walker {
     private Tree root;
     private String className;
+    private String path;
     private TypeSpec.Builder mainClass;
     private Map<String, Type> symTable;
 
-    public Walker(Tree t, String className) {
+    public Walker(Tree t, String className, String path) {
         this.root = t;
         this.className = className;
+        this.path = path;
         this.symTable = new HashMap<>();
         assert root.getText().equals("LIST_INSTR");
     }
 
-    private void addField(ClassName Class, ClassName PortClass, String port, TypeSpec.Builder mClass, String varName){
+    private void addField(ClassName Class, ClassName PortClass, String port, TypeSpec.Builder mClass, String varName) {
         FieldSpec fieldSpec = FieldSpec.builder(Class, varName)
                 .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
-                .initializer("new $T($T."+port+")", Class, PortClass).build();
+                .initializer("new $T($T." + port + ")", Class, PortClass).build();
         mClass.addField(fieldSpec);
     }
 
@@ -252,14 +258,12 @@ public class Walker {
                         sb.append(t.getChild(1).getChild(i).getText());
                         if (i != n - 1) sb.append(",");
                     }
-                    if(funcname.equals("move_back") || funcname.equals("move_front") || funcname.equals("rotate_left")
-                            || funcname.equals("rotate_right")){
+                    if (funcname.equals("move_back") || funcname.equals("move_front") || funcname.equals("rotate_left")
+                            || funcname.equals("rotate_right")) {
                         sb.append(", pilot");
-                    }
-                    else if(funcname.equals("shoot")){
+                    } else if (funcname.equals("shoot")) {
                         sb.append(", shootMotor");
-                    }
-                    else if(funcname.equals("followLine")){
+                    } else if (funcname.equals("followLine")) {
                         sb.append("lightSensor, rightMotor, leftMotor");
                     }
                     sb.append(")");
@@ -293,9 +297,23 @@ public class Walker {
             case TParser.GT:
                 return genInstrBlock(t, ">");
 
-            //case TParser.IMPORT:
-                // TODO: Import
-              //  return null;
+            case TParser.IMPORT:
+                TLexer lexer = new TLexer();
+                try {
+                    String fileName = path + t.getChild(0).getText() + ".rl";
+                    lexer.setCharStream(new ANTLRFileStream(fileName, "UTF8"));
+                    CommonTokenStream tokens = new CommonTokenStream(lexer);
+                    TParser parser = new TParser(tokens);
+                    Tree importTree = (Tree) parser.prog().getTree();
+                    for (int i = 0; i < importTree.getChildCount(); i++) {
+                        getNodeCode(importTree.getChild(i));
+                    }
+                } catch (RecognitionException ex) {
+                    System.err.println("The input file contains invalid Robolang code.");
+                } catch (IOException ex) {
+                    System.err.println("Could not import specified file.");
+                }
+                return null;
 
             case TParser.LET:
                 return genInstrBlock(t, "<=");

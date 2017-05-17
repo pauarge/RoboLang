@@ -2,6 +2,7 @@ package com.robolang;
 
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.ANTLRFileStream;
+import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTreeAdaptor;
 import org.antlr.runtime.tree.DOTTreeGenerator;
 import org.antlr.runtime.tree.Tree;
@@ -11,15 +12,14 @@ import org.antlr.stringtemplate.StringTemplate;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.io.IOException;
 
 class Main {
 
     private static boolean makeDot = false;
     private static boolean compile = true;
-    private static TLexer lexer;
 
     public static void main(String[] args) {
-        lexer = new TLexer();
         if (args.length > 0) {
             int s = 0;
             if (args[0].startsWith("-dot")) {
@@ -48,6 +48,7 @@ class Main {
 
     private static void parseSource(String source) {
         try {
+            TLexer lexer = new TLexer();
             lexer.setCharStream(new ANTLRFileStream(source, "UTF8"));
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             TParser parser = new TParser(tokens);
@@ -75,8 +76,12 @@ class Main {
             }
         } catch (FileNotFoundException ex) {
             System.err.println("\n  !!The file " + source + " does not exist!!\n");
-        } catch (Exception ex) {
-            System.err.println("Could not compile the file.");
+        } catch (RecognitionException ex) {
+            System.err.println("The input file contains invalid Robolang code.");
+        } catch (IOException ex) {
+            System.err.println("Could not read the file.");
+        } catch (InterruptedException ex) {
+            System.err.println("Could not create dot file.");
         }
     }
 
