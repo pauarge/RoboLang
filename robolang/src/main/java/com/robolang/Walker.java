@@ -254,7 +254,7 @@ public class Walker {
                     sb.append("(");
                     n = t.getChild(1).getChildCount();
                     for (int i = 0; i < n; ++i) {
-                        sb.append(t.getChild(1).getChild(i).getText());
+                        sb.append(getNodeCode(t.getChild(1).getChild(i)).toString());
                         if (i != n - 1) sb.append(",");
                     }
                     if (funcname.equals("move_back") || funcname.equals("move_front") || funcname.equals("rotate_left")
@@ -296,7 +296,7 @@ public class Walker {
             case TParser.GT:
                 return genInstrBlock(t, ">");
 
-            case TParser.IMPORT:
+            /*case TParser.IMPORT:
                 TLexer lexer = new TLexer();
                 try {
                     String fileName = path + t.getChild(0).getText() + ".rl";
@@ -312,7 +312,7 @@ public class Walker {
                 } catch (IOException ex) {
                     System.err.println("Could not import specified file.");
                 }
-                return null;
+                return null;*/
 
             case TParser.LET:
                 return genInstrBlock(t, "<=");
@@ -342,6 +342,14 @@ public class Walker {
                 return block.build();
 
             case TParser.SUB:
+                System.out.println(t.getChild(0).getText());
+                if(t.getChildCount() == 1){
+                    c = getNodeCode(t.getChild(0));
+                    block.add("(-");
+                    block.add(c);
+                    block.add(")");
+                    return block.build();
+                }
                 return genInstrBlock(t, "-");
 
             case TParser.TIMES:
@@ -367,13 +375,20 @@ public class Walker {
             case TParser.ADD:
             case TParser.DIV:
             case TParser.MOD:
-            case TParser.SUB:
             case TParser.TIMES:
                 Type tp0 = getType(t0.getChild(0), t1);
                 Type tp1 = getType(t0.getChild(1), t1);
                 assert tp0 == tp1;
                 return tp0;
 
+            case TParser.SUB:
+                if(t0.getChildCount() == 2){
+                    Type tp2 = getType(t0.getChild(0), t1);
+                    Type tp3 = getType(t0.getChild(1), t1);
+                    assert tp2 == tp3;
+                    return tp2;
+                }
+                else return float.class;
             case TParser.AND:
             case TParser.EQ:
             case TParser.FALSE:
