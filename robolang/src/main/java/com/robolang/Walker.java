@@ -264,6 +264,8 @@ public class Walker {
                         sb.append(", shootMotor");
                     } else if (funcname.equals("followLine")) {
                         sb.append("lightSensor, rightMotor, leftMotor");
+                    } else if (funcname.equals("forward") || funcname.equals("backward")){
+                        sb.append("pilot");
                     }
                     sb.append(")");
                 }
