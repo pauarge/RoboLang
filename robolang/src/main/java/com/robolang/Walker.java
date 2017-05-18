@@ -4,7 +4,6 @@ import com.squareup.javapoet.*;
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
-import lejos.robotics.navigation.DifferentialPilot;
 import org.antlr.runtime.tree.Tree;
 
 import javax.lang.model.element.Modifier;
@@ -350,7 +349,7 @@ public class Walker {
 
             case TParser.WHILE:
                 CodeBlock condWhile = getNodeCode(t.getChild(0));
-                block.beginControlFlow("while" + condWhile);
+                block.beginControlFlow("while(" + condWhile + ")");
                 Tree instrWhile = t.getChild(1);
                 for (int i = 0; i < instrWhile.getChildCount(); ++i) {
                     block.addStatement(getNodeCode(instrWhile.getChild(i)).toString());
