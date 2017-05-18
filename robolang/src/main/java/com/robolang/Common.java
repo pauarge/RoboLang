@@ -98,4 +98,8 @@ public class Common {
         C.setSpeed(360);
     }
 
+    public static void waitForPress() {
+        Button.waitForAnyPress();
+    }
+
 }

@@ -306,7 +306,7 @@ public class Walker {
                     TParser parser = new TParser(tokens);
                     Tree importTree = (Tree) parser.prog().getTree();
                     for (int i = 0; i < importTree.getChildCount(); i++) {
-                        getNodeCode(importTree.getChild(i));
+                         getNodeCode(importTree.getChild(i));
                     }
                 } catch (RecognitionException ex) {
                     System.err.println("The input file contains invalid Robolang code.");
