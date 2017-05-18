@@ -13,8 +13,16 @@ public class Common {
         System.out.println(val);
     }
 
+    public static void forward(DifferentialPilot pilot) {
+        pilot.forward();
+    }
+
     public static void move_front(double units, DifferentialPilot pilot) {
         pilot.travel(units);
+    }
+
+    public static void backward(DifferentialPilot pilot) {
+        pilot.backward();
     }
 
     public static void move_back(double units, DifferentialPilot pilot) {
@@ -30,7 +38,6 @@ public class Common {
     }
 
     private static NXTRegulatedMotor getMotorPort(String port) {
-
         if (port.equals("A")) return new NXTRegulatedMotor(MotorPort.A);
         else if (port.equals("B")) return new NXTRegulatedMotor(MotorPort.B);
         else if (port.equals("C")) return new NXTRegulatedMotor(MotorPort.C);
@@ -101,4 +108,15 @@ public class Common {
         Button.waitForAnyPress();
     }
 
+    public static void setSpeed(NXTRegulatedMotor A, float speed) {
+        A.setSpeed(speed);
+    }
+
+    public static void setAcceleration(NXTRegulatedMotor A, int acc) {
+        A.setAcceleration(acc);
+    }
+
+    public static boolean touched() {
+        return true;
+    }
 }
