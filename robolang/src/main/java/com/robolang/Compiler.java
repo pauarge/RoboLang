@@ -37,7 +37,6 @@ public class Compiler {
     private void compile() {
         Walker walker = new Walker(t, className, FilenameUtils.getFullPath(path));
         String codeAux = walker.getCode();
-        System.out.println(codeAux);
         try {
             code = new Formatter().formatSource(codeAux);
         } catch (FormatterException e) {
