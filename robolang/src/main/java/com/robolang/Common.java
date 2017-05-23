@@ -193,4 +193,8 @@ public class Common {
     public static void buzz() {
         Sound.buzz();
     }
+
+    public static float getUltrasonicDistance(UltrasonicSensor US) {
+        return US.getDistance();
+    }
 }
