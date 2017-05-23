@@ -2,9 +2,9 @@
 
 echo "Setting up..."
 filename=$1
-classname=${filename%rl}
-java_filename="${classname}java"
-nxj_filename="${classname}nxj"
+classname=${filename%.rl}
+java_filename="${classname}.java"
+nxj_filename="${classname}.nxj"
 mkdir -p tmp/com/robolang
 cp src/main/java/com/robolang/Common.java tmp/com/robolang
 cp ${filename} tmp/com/robolang
@@ -14,14 +14,15 @@ echo "Parsing..."
 java -jar ../../../target/robolang-1.0-jar-with-dependencies.jar ${filename}
 
 echo "Compiling..."
-nxjc java_filename Common.java
+nxjc ${java_filename} Common.java
 
 echo "Linking..."
 cd ../../
-nxjlink -o nxj_filename com.robolang.${classname}
+nxjlink -o ${nxj_filename} "com.robolang.${classname}"
 
 echo "Uploading..."
-nxjupload nxj_filename
+nxjupload ${nxj_filename}
 
 echo "Cleaning up..."
+cd ..
 rm -r tmp/

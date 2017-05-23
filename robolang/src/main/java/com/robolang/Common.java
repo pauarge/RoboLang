@@ -117,20 +117,20 @@ public class Common {
         LCD.clearDisplay();
         System.out.println("Calibrate white value");
         System.out.println("Press ENTER to set value");
-        LCD.clearDisplay();
-        System.out.println(L.getLow());
         waitToBePressed(Button.ID_ENTER);
-        L.calibrateLow();
+        L.setLow(L.getNormalizedLightValue());
+        System.out.println(L.getLow());
+        waitForPress();
         LCD.clearDisplay();
         System.out.println("Calibrate black value");
         System.out.println("Press ENTER to set value");
-        LCD.clearDisplay();
-        System.out.println(L.getHigh());
         waitToBePressed(Button.ID_ENTER);
-        L.calibrateHigh();
+        L.setHigh(L.getNormalizedLightValue());
+        System.out.println(L.getHigh());
+        waitForPress();
         A.setSpeed(A.getSpeed()/3);
         while (Button.ESCAPE.isUp()) {
-            if(L.getNormalizedLightValue() < 200)
+            if(L.getNormalizedLightValue() < L.getHigh()-10)
                 A.rotate(10); //Right
             else{
                 A.stop();

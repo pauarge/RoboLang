@@ -54,7 +54,7 @@ public class Walker {
 
         FieldSpec diffPilot = FieldSpec.builder(DifferentialPilotClass, "pilot")
                 .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
-                .initializer("new $T(1.65354f, 5.196f,rightMotor,leftMotor)", DifferentialPilotClass).build();
+                .initializer("new $T(4.3f, 14.2f,rightMotor,leftMotor)", DifferentialPilotClass).build();
 
 
         mainClass = TypeSpec.classBuilder(className)
