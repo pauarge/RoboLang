@@ -67,7 +67,7 @@ public class Walker {
         addField(NXTRegulatedMotorClass, MotorPortClass, "C", mainClass, "shootMotor");
         addField(TouchSensorClass, SensorPortClass, "S1", mainClass, "touchSensor");
         addField(ColorSensorClass, SensorPortClass, "S2", mainClass, "colorSensor");
-        addField(SoundSensorClass, SensorPortClass, "S3", mainClass, "tocuhSensor2");
+        addField(TouchSensorClass, SensorPortClass, "S3", mainClass, "touchSensor2");
         addField(UltrasonicSensorClass, SensorPortClass, "S4", mainClass, "ultrasonicSensor");
         mainClass.addField(diffPilot);
         getChildCode(root, mainFunc);
@@ -267,7 +267,13 @@ public class Walker {
                     } else if (funcname.equals("followLine")) {
                         sb.append("colorSensor, rightMotor, leftMotor");
                     } else if (funcname.equals("forward") || funcname.equals("backward")){
-                        sb.append("pilot, colorSensor");
+                        sb.append("pilot");
+                    } else if (funcname.equals("explore")) {
+                        sb.append("pilot,touchSensor,touchSensor2,ultrasonicSensor");
+                    } else if(funcname.equals("party")){
+                        sb.append("pilot,colorSensor");
+                    } else if(funcname.equals("getUltrasonicDistance")){
+                        sb.append("ultrasonicSensor");
                     }
                     sb.append(")");
                 }

@@ -21,7 +21,7 @@ cd ../../
 nxjlink -o ${nxj_filename} "com.robolang.${classname}"
 
 echo "Uploading..."
-nxjupload ${nxj_filename}
+nxjupload -r ${nxj_filename}
 
 echo "Cleaning up..."
 cd ..

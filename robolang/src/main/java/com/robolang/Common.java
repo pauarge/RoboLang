@@ -17,25 +17,8 @@ public class Common {
         System.out.println(val);
     }
 
-    public static void forward(DifferentialPilot pilot, ColorSensor L) {
-        //pilot.forward();
-        Delay d = new Delay();
-        waitForPress();
-        SensorPort.S2.activate();
-        L.calibrateHigh();
-        System.out.println("High: " + L.getHigh());
-        waitForPress();
-        L.calibrateLow();
-        System.out.println("Low: " + L.getLow());
-        waitForPress();
-        LCD.clearDisplay();
-        while (true) {
-            System.out.println("LightValue: " + L.getLightValue());
-            System.out.println("Floodlight: " + L.getFloodlight());
-            System.out.println("Normalized Light: " + L.getNormalizedLightValue());
-            d.msDelay(100);
-            LCD.clearDisplay();
-        }
+    public static void forward(DifferentialPilot pilot) {
+        pilot.forward();
     }
 
     public static void move_front(double units, DifferentialPilot pilot) {
@@ -102,10 +85,10 @@ public class Common {
         while (Button.ESCAPE.isUp()) {
             if (T1.isPressed() || T2.isPressed()) {
                 pilot.stop();
-                pilot.rotate(-180);
+                move_back(10, pilot);
                 // TODO: Maybe use getDistances and use average?
-                while (U.getDistance() < 10) {
-                    pilot.rotate(10);
+                while (U.getDistance() < 25) {
+                    pilot.rotate(15);
                 }
                 pilot.forward();
             }
@@ -115,30 +98,33 @@ public class Common {
 
     public static void followLine(ColorSensor L, NXTRegulatedMotor A, NXTRegulatedMotor B) {
         LCD.clearDisplay();
-        System.out.println("Calibrate white value");
+        System.out.println("Calibrate black value");
         System.out.println("Press ENTER to set value");
         waitToBePressed(Button.ID_ENTER);
         L.setLow(L.getNormalizedLightValue());
         System.out.println(L.getLow());
         waitForPress();
         LCD.clearDisplay();
-        System.out.println("Calibrate black value");
+        System.out.println("Calibrate white value");
         System.out.println("Press ENTER to set value");
         waitToBePressed(Button.ID_ENTER);
         L.setHigh(L.getNormalizedLightValue());
         System.out.println(L.getHigh());
         waitForPress();
-        A.setSpeed(A.getSpeed()/3);
+        LCD.clearDisplay();
+        A.setAcceleration(A.getAcceleration()/4);
+        B.setAcceleration(B.getAcceleration()/4);
+        B.setSpeed(B.getSpeed()/2);
+        A.setSpeed(A.getSpeed()/2);
         while (Button.ESCAPE.isUp()) {
-            if(L.getNormalizedLightValue() < L.getHigh()-10)
-                A.rotate(10); //Right
+            if(L.getNormalizedLightValue() < L.getHigh()-10) {
+                B.stop();
+                A.forward(); //Right
+            }
             else{
                 A.stop();
-                B.rotate(10);
+                B.forward();
             }
-            //while (L.readValue() != L.getHigh()) ;
-            //while(L.getNormalizedLightValue() < 200);
-             //Left
         }
     }
 
@@ -150,12 +136,15 @@ public class Common {
         C.setSpeed(360);
     }
 
-    public static void party(ColorSensor L, DifferentialPilot pilot) {
+    public static void party(DifferentialPilot pilot, ColorSensor L) {
         while (Button.ESCAPE.isUp()) {
             try {
-                pilot.rotate(10);
+                pilot.rotate(25);
                 Sound.beepSequenceUp();
                 L.getNormalizedLightValue();
+                Sound.beep();
+                Sound.beepSequence();
+                Sound.buzz();
                 Thread.sleep(1000);
             } catch (InterruptedException ex) {
                 continue;
