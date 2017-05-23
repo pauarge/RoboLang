@@ -29,8 +29,8 @@ public class Common {
         System.out.println("Low: " + L.getLow());
         waitForPress();
         LCD.clearDisplay();
-        while(true){
-            System.out.println("LightValue: "+ L.getLightValue());
+        while (true) {
+            System.out.println("LightValue: " + L.getLightValue());
             System.out.println("Floodlight: " + L.getFloodlight());
             System.out.println("Normalized Light: " + L.getNormalizedLightValue());
             d.msDelay(100);
@@ -94,13 +94,13 @@ public class Common {
         B.waitForPressAndRelease();
 
         TouchSensor ts = new TouchSensor(SensorPort.S1);
-        
+
     }
 
-    public static void explore(DifferentialPilot pilot, TouchSensor T, UltrasonicSensor U) {
+    public static void explore(DifferentialPilot pilot, TouchSensor T1, TouchSensor T2, UltrasonicSensor U) {
         pilot.forward();
         while (Button.ESCAPE.isUp()) {
-            if (T.isPressed()) {
+            if (T1.isPressed() || T2.isPressed()) {
                 pilot.stop();
                 pilot.rotate(-180);
                 // TODO: Maybe use getDistances and use average?
@@ -128,17 +128,17 @@ public class Common {
         System.out.println(L.getHigh());
         waitToBePressed(Button.ID_ENTER);
         L.calibrateHigh();
-        A.setSpeed(A.getSpeed()/3);
+        A.setSpeed(A.getSpeed() / 3);
         while (Button.ESCAPE.isUp()) {
-            if(L.getNormalizedLightValue() < 200)
+            if (L.getNormalizedLightValue() < 200)
                 A.rotate(10); //Right
-            else{
+            else {
                 A.stop();
                 B.rotate(10);
             }
             //while (L.readValue() != L.getHigh()) ;
             //while(L.getNormalizedLightValue() < 200);
-             //Left
+            //Left
         }
     }
 
@@ -150,11 +150,12 @@ public class Common {
         C.setSpeed(360);
     }
 
-    public static void party(DifferentialPilot pilot) {
+    public static void party(ColorSensor L, DifferentialPilot pilot) {
         while (Button.ESCAPE.isUp()) {
             try {
                 pilot.rotate(10);
                 Sound.beepSequenceUp();
+                L.getNormalizedLightValue();
                 Thread.sleep(1000);
             } catch (InterruptedException ex) {
                 continue;
