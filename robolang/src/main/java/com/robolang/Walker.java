@@ -41,7 +41,7 @@ public class Walker {
         ClassName MotorPortClass = ClassName.get("lejos.nxt", "MotorPort");
         ClassName SensorPortClass = ClassName.get("lejos.nxt", "SensorPort");
         ClassName TouchSensorClass = ClassName.get("lejos.nxt", "TouchSensor");
-        ClassName LightSensorClass = ClassName.get("lejos.nxt", "LightSensor");
+        ClassName ColorSensorClass = ClassName.get("lejos.nxt", "ColorSensor");
         ClassName SoundSensorClass = ClassName.get("lejos.nxt", "SoundSensor");
         ClassName UltrasonicSensorClass = ClassName.get("lejos.nxt", "UltrasonicSensor");
         ClassName DifferentialPilotClass = ClassName.get("lejos.robotics.navigation", "DifferentialPilot");
@@ -54,7 +54,7 @@ public class Walker {
 
         FieldSpec diffPilot = FieldSpec.builder(DifferentialPilotClass, "pilot")
                 .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
-                .initializer("new $T(4.0f,13.4f,rightMotor,leftMotor)", DifferentialPilotClass).build();
+                .initializer("new $T(1.65354f, 5.196f,rightMotor,leftMotor)", DifferentialPilotClass).build();
 
 
         mainClass = TypeSpec.classBuilder(className)
@@ -66,8 +66,8 @@ public class Walker {
         addField(NXTRegulatedMotorClass, MotorPortClass, "C", mainClass, "sensorMotor");
         addField(NXTRegulatedMotorClass, MotorPortClass, "C", mainClass, "shootMotor");
         addField(TouchSensorClass, SensorPortClass, "S1", mainClass, "touchSensor");
-        addField(LightSensorClass, SensorPortClass, "S2", mainClass, "lightSensor");
-        addField(SoundSensorClass, SensorPortClass, "S3", mainClass, "soundSensor");
+        addField(ColorSensorClass, SensorPortClass, "S2", mainClass, "colorSensor");
+        addField(SoundSensorClass, SensorPortClass, "S3", mainClass, "tocuhSensor2");
         addField(UltrasonicSensorClass, SensorPortClass, "S4", mainClass, "ultrasonicSensor");
         mainClass.addField(diffPilot);
         getChildCode(root, mainFunc);
@@ -232,9 +232,11 @@ public class Walker {
                             break;
                         case "touchSensor":
                             sb.append("touchSensor = new TouchSensor(SensorPort." + port + ")");
+                        case "touchSensor2":
+                            sb.append("touchSensor2 = new TouchSensor(SensorPort." + port + ")");
                             break;
-                        case "lightSensor":
-                            sb.append("lightSensor = new LightSensor(SensorPort." + port + ")");
+                        case "colorSensor":
+                            sb.append("colorSensor = new ColorSensor(SensorPort." + port + ")");
                             break;
                         case "soundSensor":
                             sb.append("soundSensor = new SoundSensor(SensorPort." + port + ")");
@@ -263,9 +265,9 @@ public class Walker {
                     } else if (funcname.equals("shoot")) {
                         sb.append(", shootMotor");
                     } else if (funcname.equals("followLine")) {
-                        sb.append("lightSensor, rightMotor, leftMotor");
+                        sb.append("colorSensor, rightMotor, leftMotor");
                     } else if (funcname.equals("forward") || funcname.equals("backward")){
-                        sb.append("pilot");
+                        sb.append("pilot, colorSensor");
                     }
                     sb.append(")");
                 }

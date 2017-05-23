@@ -2,6 +2,10 @@ package com.robolang;
 
 import lejos.nxt.*;
 import lejos.robotics.navigation.DifferentialPilot;
+import lejos.util.Delay;
+
+import javax.microedition.sensor.SensorInfo;
+
 
 public class Common {
 
@@ -13,8 +17,25 @@ public class Common {
         System.out.println(val);
     }
 
-    public static void forward(DifferentialPilot pilot) {
-        pilot.forward();
+    public static void forward(DifferentialPilot pilot, ColorSensor L) {
+        //pilot.forward();
+        Delay d = new Delay();
+        waitForPress();
+        SensorPort.S2.activate();
+        L.calibrateHigh();
+        System.out.println("High: " + L.getHigh());
+        waitForPress();
+        L.calibrateLow();
+        System.out.println("Low: " + L.getLow());
+        waitForPress();
+        LCD.clearDisplay();
+        while(true){
+            System.out.println("LightValue: "+ L.getLightValue());
+            System.out.println("Floodlight: " + L.getFloodlight());
+            System.out.println("Normalized Light: " + L.getNormalizedLightValue());
+            d.msDelay(100);
+            LCD.clearDisplay();
+        }
     }
 
     public static void move_front(double units, DifferentialPilot pilot) {
@@ -71,6 +92,9 @@ public class Common {
     public static void waitToBePressed(int id) {
         Button B = getButton(id);
         B.waitForPressAndRelease();
+
+        TouchSensor ts = new TouchSensor(SensorPort.S1);
+        
     }
 
     public static void explore(DifferentialPilot pilot, TouchSensor T, UltrasonicSensor U) {
@@ -89,22 +113,32 @@ public class Common {
         pilot.stop();
     }
 
-    public static void followLine(LightSensor L, NXTRegulatedMotor A, NXTRegulatedMotor B) {
+    public static void followLine(ColorSensor L, NXTRegulatedMotor A, NXTRegulatedMotor B) {
         LCD.clearDisplay();
         System.out.println("Calibrate white value");
         System.out.println("Press ENTER to set value");
+        LCD.clearDisplay();
+        System.out.println(L.getLow());
         waitToBePressed(Button.ID_ENTER);
-        L.calibrateHigh();
+        L.calibrateLow();
         LCD.clearDisplay();
         System.out.println("Calibrate black value");
         System.out.println("Press ENTER to set value");
+        LCD.clearDisplay();
+        System.out.println(L.getHigh());
         waitToBePressed(Button.ID_ENTER);
-        L.calibrateLow();
+        L.calibrateHigh();
+        A.setSpeed(A.getSpeed()/3);
         while (Button.ESCAPE.isUp()) {
-            A.forward(); //Right
-            while (L.readValue() != L.getHigh()) ;
-            A.stop();
-            B.rotate(30); //Left
+            if(L.getNormalizedLightValue() < 200)
+                A.rotate(10); //Right
+            else{
+                A.stop();
+                B.rotate(10);
+            }
+            //while (L.readValue() != L.getHigh()) ;
+            //while(L.getNormalizedLightValue() < 200);
+             //Left
         }
     }
 
