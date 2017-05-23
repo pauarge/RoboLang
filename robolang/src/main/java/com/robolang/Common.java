@@ -73,8 +73,20 @@ public class Common {
         B.waitForPressAndRelease();
     }
 
-    public static void explore() {
-
+    public static void explore(DifferentialPilot pilot, TouchSensor T, UltrasonicSensor U) {
+        pilot.forward();
+        while (Button.ESCAPE.isUp()) {
+            if (T.isPressed()) {
+                pilot.stop();
+                pilot.rotate(-180);
+                // TODO: Maybe use getDistances and use average?
+                while(U.getDistance() < 10) {
+                    pilot.rotate(10);
+                }
+                pilot.forward();
+            }
+        }
+        pilot.stop();
     }
 
     public static void followLine(LightSensor L, NXTRegulatedMotor A, NXTRegulatedMotor B) {
@@ -118,5 +130,21 @@ public class Common {
 
     public static boolean touched() {
         return true;
+    }
+
+    public static void beep() {
+        Sound.beep();
+    }
+
+    public static void beepSequence() {
+        Sound.beepSequence();
+    }
+
+    public static void beepSequenceUp() {
+        Sound.beepSequenceUp();
+    }
+
+    public static void buzz() {
+        Sound.buzz();
     }
 }
