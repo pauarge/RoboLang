@@ -104,7 +104,7 @@ public class Common {
                 pilot.stop();
                 pilot.rotate(-180);
                 // TODO: Maybe use getDistances and use average?
-                while(U.getDistance() < 10) {
+                while (U.getDistance() < 10) {
                     pilot.rotate(10);
                 }
                 pilot.forward();
@@ -148,6 +148,18 @@ public class Common {
             C.rotate(360);
         }
         C.setSpeed(360);
+    }
+
+    public static void party(DifferentialPilot pilot) {
+        while (Button.ESCAPE.isUp()) {
+            try {
+                pilot.rotate(10);
+                Sound.beepSequenceUp();
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                continue;
+            }
+        }
     }
 
     public static void waitForPress() {
