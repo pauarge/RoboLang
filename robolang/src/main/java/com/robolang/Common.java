@@ -1,7 +1,6 @@
 package com.robolang;
 
 import lejos.nxt.*;
-import lejos.robotics.Color;
 import lejos.robotics.navigation.DifferentialPilot;
 
 
@@ -228,11 +227,11 @@ public class Common {
     }
 
     public static void calibrateWhiteColor(ColorSensor CS) {
-        CS.calibrateHigh();
+        CS.setHigh(CS.getNormalizedLightValue());
     }
 
     public static void calibrateBlackColor(ColorSensor CS) {
-        CS.calibrateLow();
+        CS.setLow(CS.getNormalizedLightValue());
     }
 
     public static double getHighValue(ColorSensor CS) {
