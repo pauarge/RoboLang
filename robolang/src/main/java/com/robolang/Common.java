@@ -170,12 +170,12 @@ public class Common {
         Button.waitForAnyPress();
     }
 
-    public static void setSpeed(float speed, NXTRegulatedMotor A) {
-        A.setSpeed(speed);
+    public static void setSpeed(double speed, NXTRegulatedMotor A) {
+        A.setSpeed((float) speed);
     }
 
-    public static void setAcceleration(int acc, NXTRegulatedMotor A) {
-        A.setAcceleration(acc);
+    public static void setAcceleration(double acc, NXTRegulatedMotor A) {
+        A.setAcceleration((int) acc);
     }
 
     public static void beep() {
