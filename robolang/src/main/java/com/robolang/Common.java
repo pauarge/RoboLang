@@ -23,6 +23,10 @@ public class Common {
         pilot.forward();
     }
 
+    public static void stop(DifferentialPilot pilot) {
+        pilot.stop();
+    }
+
     public static void move_front(double units, DifferentialPilot pilot) {
         pilot.travel(units);
     }
@@ -201,6 +205,10 @@ public class Common {
 
     public static boolean isPressed(TouchSensor TS) {
         return TS.isPressed();
+    }
+
+    public static boolean isPressed(Button b) {
+        return b.isDown();
     }
 
     public static double getSpeed(NXTRegulatedMotor M) {
