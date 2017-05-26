@@ -2,9 +2,6 @@ package com.robolang;
 
 import lejos.nxt.*;
 import lejos.robotics.navigation.DifferentialPilot;
-import lejos.util.Delay;
-
-import javax.microedition.sensor.SensorInfo;
 
 
 public class Common {
@@ -77,7 +74,6 @@ public class Common {
         B.waitForPressAndRelease();
 
         TouchSensor ts = new TouchSensor(SensorPort.S1);
-
     }
 
     public static void explore(DifferentialPilot pilot, TouchSensor T1, TouchSensor T2, UltrasonicSensor U) {
@@ -87,10 +83,20 @@ public class Common {
                 pilot.stop();
                 move_back(10, pilot);
                 // TODO: Maybe use getDistances and use average?
-                while (U.getDistance() < 25) {
-                    pilot.rotate(15);
-                }
+                while (U.getDistance() < 25) pilot.rotate(15);
                 pilot.forward();
+            }
+        }
+        pilot.stop();
+    }
+
+    public static void exploreUltrasonic(DifferentialPilot pilot, UltrasonicSensor U){
+        pilot.forward();
+        while(Button.ESCAPE.isUp()){
+            if(U.getDistance() < 10){
+                pilot.stop();
+                move_back(10, pilot);
+                while (U.getDistance() < 25) pilot.rotate(15);
             }
         }
         pilot.stop();

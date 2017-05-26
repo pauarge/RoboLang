@@ -2,7 +2,8 @@
 
 echo "Setting up..."
 filename=$1
-classname=${filename%.rl}
+filebasename=basename${filename}
+classname=${filebasename%.rl}
 java_filename="${classname}.java"
 nxj_filename="${classname}.nxj"
 mkdir -p tmp/com/robolang
@@ -11,7 +12,7 @@ cp ${filename} tmp/com/robolang
 cd tmp/com/robolang
 
 echo "Parsing..."
-java -jar ../../../target/robolang-1.0-jar-with-dependencies.jar ${filename}
+java -jar ../../../target/robolang-1.0-jar-with-dependencies.jar ${filebasename}
 
 echo "Compiling..."
 nxjc ${java_filename} Common.java

@@ -8,6 +8,7 @@ import org.antlr.runtime.tree.Tree;
 
 import javax.lang.model.element.Modifier;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
@@ -246,8 +247,8 @@ public class Walker {
                             break;
                     }
                 } else {
-                    for (CommonMethods m : CommonMethods.values()) {
-                        if (m.name().equals(funcname)) {
+                    for (Method m : Common.class.getMethods()) {
+                        if (m.getName().equals(funcname)) {
                             sb.append("Common.");
                             break;
                         }
@@ -266,13 +267,13 @@ public class Walker {
                         sb.append(", shootMotor");
                     } else if (funcname.equals("followLine")) {
                         sb.append("colorSensor, rightMotor, leftMotor");
-                    } else if (funcname.equals("forward") || funcname.equals("backward")){
+                    } else if (funcname.equals("forward") || funcname.equals("backward")) {
                         sb.append("pilot");
                     } else if (funcname.equals("explore")) {
                         sb.append("pilot,touchSensor,touchSensor2,ultrasonicSensor");
-                    } else if(funcname.equals("party")){
+                    } else if (funcname.equals("party")) {
                         sb.append("pilot,colorSensor");
-                    } else if(funcname.equals("getUltrasonicDistance")){
+                    } else if (funcname.equals("getUltrasonicDistance")) {
                         sb.append("ultrasonicSensor");
                     }
                     sb.append(")");
@@ -306,7 +307,7 @@ public class Walker {
             case TParser.GT:
                 return genInstrBlock(t, ">");
 
-            /*case TParser.IMPORT:
+            case TParser.IMPORT:
                 TLexer lexer = new TLexer();
                 try {
                     String fileName = path + t.getChild(0).getText() + ".rl";
@@ -315,14 +316,14 @@ public class Walker {
                     TParser parser = new TParser(tokens);
                     Tree importTree = (Tree) parser.prog().getTree();
                     for (int i = 0; i < importTree.getChildCount(); i++) {
-                         getNodeCode(importTree.getChild(i));
+                        getNodeCode(importTree.getChild(i));
                     }
                 } catch (RecognitionException ex) {
                     System.err.println("The input file contains invalid Robolang code.");
                 } catch (IOException ex) {
                     System.err.println("Could not import specified file.");
                 }
-                return null;*/
+                return null;
 
             case TParser.LET:
                 return genInstrBlock(t, "<=");
@@ -353,7 +354,7 @@ public class Walker {
 
             case TParser.SUB:
                 System.out.println(t.getChild(0).getText());
-                if(t.getChildCount() == 1){
+                if (t.getChildCount() == 1) {
                     c = getNodeCode(t.getChild(0));
                     block.add("(-");
                     block.add(c);
@@ -392,13 +393,12 @@ public class Walker {
                 return tp0;
 
             case TParser.SUB:
-                if(t0.getChildCount() == 2){
+                if (t0.getChildCount() == 2) {
                     Type tp2 = getType(t0.getChild(0), t1);
                     Type tp3 = getType(t0.getChild(1), t1);
                     assert tp2 == tp3;
                     return tp2;
-                }
-                else return float.class;
+                } else return float.class;
             case TParser.AND:
             case TParser.EQ:
             case TParser.FALSE:
