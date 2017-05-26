@@ -11,6 +11,6 @@ $S2.setWhiteColor();*/
 
 
 
-A = $S2.getValue();
+a = 2;
 
 

@@ -1,6 +1,7 @@
 package com.robolang;
 
 import lejos.nxt.*;
+import lejos.robotics.Color;
 import lejos.robotics.navigation.DifferentialPilot;
 
 
@@ -12,6 +13,10 @@ public class Common {
 
     public static void print(double val) {
         System.out.println(val);
+    }
+
+    public static void clearDisplay() {
+        LCD.clearDisplay();
     }
 
     public static void forward(DifferentialPilot pilot) {
@@ -162,11 +167,11 @@ public class Common {
         Button.waitForAnyPress();
     }
 
-    public static void setSpeed(NXTRegulatedMotor A, float speed) {
+    public static void setSpeed(float speed, NXTRegulatedMotor A) {
         A.setSpeed(speed);
     }
 
-    public static void setAcceleration(NXTRegulatedMotor A, int acc) {
+    public static void setAcceleration(int acc, NXTRegulatedMotor A) {
         A.setAcceleration(acc);
     }
 
@@ -208,5 +213,25 @@ public class Common {
 
     public static double getMaxSpeed(NXTRegulatedMotor M) {
         return M.getMaxSpeed();
+    }
+
+    public static double getColor(ColorSensor CS) {
+        return CS.getNormalizedLightValue();
+    }
+
+    public static void calibrateWhiteColor(ColorSensor CS) {
+        CS.calibrateHigh();
+    }
+
+    public static void calibrateBlackColor(ColorSensor CS) {
+        CS.calibrateLow();
+    }
+
+    public static double getHighValue(ColorSensor CS) {
+        return CS.getHigh();
+    }
+
+    public static double getLowValue(ColorSensor CS) {
+        return CS.getLow();
     }
 }
