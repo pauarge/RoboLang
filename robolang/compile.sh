@@ -2,7 +2,7 @@
 
 echo "Setting up..."
 filename=$1
-filebasename=basename${filename}
+filebasename=${filename##*/}
 classname=${filebasename%.rl}
 java_filename="${classname}.java"
 nxj_filename="${classname}.nxj"
