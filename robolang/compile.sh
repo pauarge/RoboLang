@@ -14,16 +14,16 @@ cd tmp/com/robolang
 echo "Parsing..."
 java -jar ../../../target/robolang-1.0-jar-with-dependencies.jar ${filebasename}
 
-#echo "Compiling..."
-#nxjc ${java_filename} Common.java
-#
-#echo "Linking..."
-#cd ../../
-#nxjlink -o ${nxj_filename} "com.robolang.${classname}"
+echo "Compiling..."
+nxjc ${java_filename} Common.java
+
+echo "Linking..."
+cd ../../
+nxjlink -o ${nxj_filename} "com.robolang.${classname}"
 #
 #echo "Uploading..."
 ##nxjupload -r ${nxj_filename}
-#
-#echo "Cleaning up..."
-#cd ..
-#rm -r tmp/
+
+echo "Cleaning up..."
+cd ..
+rm -r tmp/
