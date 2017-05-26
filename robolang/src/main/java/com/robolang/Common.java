@@ -64,8 +64,7 @@ public class Common {
         }
     }
 
-    public static void move(String port, double units) {
-        NXTRegulatedMotor X = getMotorPort(port);
+    public static void move(double units, NXTRegulatedMotor X) {
         X.rotate((int) units * 360);
     }
 
@@ -93,11 +92,12 @@ public class Common {
     public static void exploreUltrasonic(DifferentialPilot pilot, UltrasonicSensor U){
         pilot.forward();
         while(Button.ESCAPE.isUp()){
-            if(U.getDistance() < 10){
+            if(U.getDistance() < 20){
                 pilot.stop();
                 move_back(10, pilot);
                 while (U.getDistance() < 25) pilot.rotate(15);
             }
+            pilot.forward();
         }
         pilot.stop();
     }

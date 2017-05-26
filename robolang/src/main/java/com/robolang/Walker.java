@@ -1,6 +1,8 @@
 package com.robolang;
 
 import com.squareup.javapoet.*;
+import lejos.nxt.MotorPort;
+import lejos.robotics.navigation.DifferentialPilot;
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
@@ -21,13 +23,29 @@ public class Walker {
     private String path;
     private TypeSpec.Builder mainClass;
     private Map<String, Type> symTable;
+    private Map<String, String> portMap;
+    private double wheelDiameter;
+    private double trackWidth;
 
     public Walker(Tree t, String className, String path) {
         this.root = t;
         this.className = className;
         this.path = path;
         this.symTable = new HashMap<>();
+        this.portMap = new HashMap<>();
+        for (Method m : Common.class.getMethods()) {
+            symTable.put("def_"+m.getName(), m.getGenericReturnType());
+        }
         assert root.getText().equals("LIST_INSTR");
+        portMap.put("A", "rightMotor");
+        portMap.put("B", "leftMotor");
+        portMap.put("C", "shootMotor");
+        portMap.put("S1", "touchSensor");
+        portMap.put("S2", "colorSensor");
+        portMap.put("S3", "touchSensor");
+        portMap.put("S4", "ultrasonicSensor");
+        this.wheelDiameter = 4.3;
+        this.trackWidth = 14.2;
     }
 
     private void addField(ClassName Class, ClassName PortClass, String port, TypeSpec.Builder mClass, String varName) {
@@ -86,6 +104,10 @@ public class Walker {
                 func.addStatement(block.toString());
             }
         }
+    }
+
+    private String generalToOur(String port){
+        return portMap.get(port);
     }
 
     private CodeBlock getNodeCode(Tree t) {
@@ -184,18 +206,7 @@ public class Walker {
                 return genInstrBlock(t, "==");
 
             case TParser.DOLLAR:
-                StringBuilder sb = new StringBuilder();
-                sb.append(t.getChild(1).getChild(0).getText());
-                sb.append("(" + t.getChild(0).getText());
-                int n = t.getChild(1).getChild(1).getChildCount();
-                for (int i = 0; i < n; ++i) {
-                    if (i == 0) sb.append(",");
-                    sb.append(t.getChild(1).getChild(1).getChild(i).getText());
-                    if (i != n - 1) sb.append(",");
-                }
-                sb.append(")");
-                block.add(sb.toString());
-                return block.build();
+                return getNodeCode(t.getChild(1));
 
             case TParser.FOR:
                 String list2 = getNodeCode(t.getChild(1)).toString();
@@ -207,9 +218,16 @@ public class Walker {
                 return block.build();
 
             case TParser.FUNCALL:
-                sb = new StringBuilder();
+                boolean motorChanged = false;
+                boolean structureChanged = false;
+                StringBuilder sb = new StringBuilder();
                 String funcname = t.getChild(0).getText();
+                boolean first = true;
                 if (funcname.equals("setDefault")) {
+                    if(first){
+                        first = false;
+                        portMap.clear();
+                    }
                     Tree sdParams = t.getChild(1);
                     String portName = sdParams.getChild(0).getText();
                     String port = sdParams.getChild(1).getText();
@@ -217,45 +235,97 @@ public class Walker {
                     port = port.substring(1, port.length() - 1);
                     switch (portName) {
                         case "leftMotor":
+                            motorChanged = true;
                             sb.append("leftMotor = new NXTRegulatedMotor(MotorPort." + port + ")");
+                            if(portMap.containsKey(port))
+                                portMap.replace(port, "leftMotor");
+                            else
+                                portMap.put(port, "leftMotor");
                             break;
                         case "rightMotor":
+                            motorChanged = true;
                             sb.append("rightMotor = new NXTRegulatedMotor(MotorPort." + port + ")");
+                            if(portMap.containsKey(port))
+                                portMap.replace(port, "rightMotor");
+                            else
+                                portMap.put(port, "rightMotor");
                             break;
                         case "armMotor":
                             sb.append("armMotor = new NXTRegulatedMotor(MotorPort." + port + ")");
+                            if(portMap.containsKey(port))
+                                portMap.replace(port, "armMotor");
+                            else
+                                portMap.put(port, "armMotor");
                             break;
                         case "sensorMotor":
                             sb.append("sensorMotor = new NXTRegulatedMotor(MotorPort." + port + ")");
+                            if(portMap.containsKey(port))
+                                portMap.replace(port, "sensorMotor");
+                            else
+                                portMap.put(port, "sensorMotor");
                             break;
                         case "shootMotor":
                             sb.append("shootMotor = new NXTRegulatedMotor(MotorPort." + port + ")");
+                            if(portMap.containsKey(port))
+                                portMap.replace(port, "shootMotor");
+                            else
+                                portMap.put(port, "shootMotor");
                             break;
                         case "touchSensor":
                             sb.append("touchSensor = new TouchSensor(SensorPort." + port + ")");
+                            if(portMap.containsKey(port))
+                                portMap.replace(port, "touchSensor");
+                            else
+                                portMap.put(port, "touchSensor");
                         case "touchSensor2":
                             sb.append("touchSensor2 = new TouchSensor(SensorPort." + port + ")");
+                            if(portMap.containsKey(port))
+                                portMap.replace(port, "touchSensor2");
+                            else
+                                portMap.put(port, "touchSensor2");
                             break;
                         case "colorSensor":
                             sb.append("colorSensor = new ColorSensor(SensorPort." + port + ")");
+                            if(portMap.containsKey(port))
+                                portMap.replace(port, "colorSensor");
+                            else
+                                portMap.put(port, "colorSensor");
                             break;
                         case "soundSensor":
                             sb.append("soundSensor = new SoundSensor(SensorPort." + port + ")");
+                            if(portMap.containsKey(port))
+                                portMap.replace(port, "soundSensor");
+                            else
+                                portMap.put(port, "soundSensor");
                             break;
                         case "ultrasonicSensor":
                             sb.append("ultrasonicSensor = new UltrasonicSensor(SensorPort." + port + ")");
+                            if(portMap.containsKey(port))
+                                portMap.replace(port, "ultrasonicSensor");
+                            else
+                                portMap.put(port, "ultrasonicSensor");
+                            break;
+                        case "wheelDiameter":
+                            structureChanged = true;
+                            wheelDiameter = Double.parseDouble(port);
+                            break;
+                        case "trackWidth":
+                            structureChanged = true;
+                            trackWidth = Double.parseDouble(port);
                             break;
                     }
                 } else {
+                    boolean common = false;
                     for (Method m : Common.class.getMethods()) {
                         if (m.getName().equals(funcname)) {
                             sb.append("Common.");
+                            common = true;
                             break;
                         }
                     }
                     sb.append(funcname);
                     sb.append("(");
-                    n = t.getChild(1).getChildCount();
+                    int n = t.getChild(1).getChildCount();
                     for (int i = 0; i < n; ++i) {
                         sb.append(getNodeCode(t.getChild(1).getChild(i)).toString());
                         if (i != n - 1) sb.append(",");
@@ -267,18 +337,28 @@ public class Walker {
                         sb.append(", shootMotor");
                     } else if (funcname.equals("followLine")) {
                         sb.append("colorSensor, rightMotor, leftMotor");
-                    } else if (funcname.equals("forward") || funcname.equals("backward")) {
+                    } else if (funcname.equals("forward") || funcname.equals("backward")){
                         sb.append("pilot");
                     } else if (funcname.equals("explore")) {
                         sb.append("pilot,touchSensor,touchSensor2,ultrasonicSensor");
-                    } else if (funcname.equals("party")) {
+                    } else if(funcname.equals("party")){
                         sb.append("pilot,colorSensor");
-                    } else if (funcname.equals("getUltrasonicDistance")) {
+                    } else if(funcname.equals("getUltrasonicDistance")){
                         sb.append("ultrasonicSensor");
+                    } else if(funcname.equals("exploreUltrasonic")){
+                        sb.append("pilot," +
+                                "ultrasonicSensor");
+                    }
+                    if(common && t.getParent().getText().equals("$")){
+                        if(t.getChild(1).getChildCount() != 0) sb.append(",");
+                        sb.append(portMap.get(t.getParent().getChild(0).getText()));
                     }
                     sb.append(")");
                 }
-                block.add(sb.toString());
+                if(!structureChanged)block.add(sb.toString()+";\n");
+                if(motorChanged || structureChanged) {
+                    block.add("pilot = new DifferentialPilot("+wheelDiameter+","+trackWidth+",rightMotor,leftMotor)");
+                }
                 return block.build();
 
             case TParser.FUNCTION:
@@ -307,7 +387,7 @@ public class Walker {
             case TParser.GT:
                 return genInstrBlock(t, ">");
 
-            case TParser.IMPORT:
+            /*case TParser.IMPORT:
                 TLexer lexer = new TLexer();
                 try {
                     String fileName = path + t.getChild(0).getText() + ".rl";
@@ -316,14 +396,14 @@ public class Walker {
                     TParser parser = new TParser(tokens);
                     Tree importTree = (Tree) parser.prog().getTree();
                     for (int i = 0; i < importTree.getChildCount(); i++) {
-                        getNodeCode(importTree.getChild(i));
+                         getNodeCode(importTree.getChild(i));
                     }
                 } catch (RecognitionException ex) {
                     System.err.println("The input file contains invalid Robolang code.");
                 } catch (IOException ex) {
                     System.err.println("Could not import specified file.");
                 }
-                return null;
+                return null;*/
 
             case TParser.LET:
                 return genInstrBlock(t, "<=");
@@ -354,7 +434,7 @@ public class Walker {
 
             case TParser.SUB:
                 System.out.println(t.getChild(0).getText());
-                if (t.getChildCount() == 1) {
+                if(t.getChildCount() == 1){
                     c = getNodeCode(t.getChild(0));
                     block.add("(-");
                     block.add(c);
@@ -383,6 +463,10 @@ public class Walker {
 
     private Type getType(Tree t0, Tree t1) {
         switch (t0.getType()) {
+
+            case TParser.DOLLAR:
+                return getType(t0.getChild(1),null);
+
             case TParser.ADD:
             case TParser.DIV:
             case TParser.MOD:
@@ -393,12 +477,13 @@ public class Walker {
                 return tp0;
 
             case TParser.SUB:
-                if (t0.getChildCount() == 2) {
+                if(t0.getChildCount() == 2){
                     Type tp2 = getType(t0.getChild(0), t1);
                     Type tp3 = getType(t0.getChild(1), t1);
                     assert tp2 == tp3;
                     return tp2;
-                } else return float.class;
+                }
+                else return float.class;
             case TParser.AND:
             case TParser.EQ:
             case TParser.FALSE:
