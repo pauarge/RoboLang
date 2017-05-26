@@ -22,8 +22,16 @@ public class Common {
         pilot.forward();
     }
 
+    public static void forward(NXTRegulatedMotor M) {
+        M.forward();
+    }
+
     public static void stop(DifferentialPilot pilot) {
         pilot.stop();
+    }
+
+    public static void stop(NXTRegulatedMotor M) {
+        M.stop();
     }
 
     public static void move_front(double units, DifferentialPilot pilot) {
@@ -32,6 +40,11 @@ public class Common {
 
     public static void backward(DifferentialPilot pilot) {
         pilot.backward();
+    }
+
+    public static void move(boolean forward, NXTRegulatedMotor M) {
+        if(forward) M.forward();
+        else M.backward();
     }
 
     public static void move_back(double units, DifferentialPilot pilot) {
@@ -72,7 +85,7 @@ public class Common {
         }
     }
 
-    public static void move(double units, NXTRegulatedMotor X) {
+    public static void rotation_move(double units, NXTRegulatedMotor X) {
         X.rotate((int) units * 360);
     }
 
