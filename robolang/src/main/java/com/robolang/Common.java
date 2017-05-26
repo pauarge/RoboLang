@@ -186,11 +186,27 @@ public class Common {
         Sound.buzz();
     }
 
-    public static float getUltrasonicDistance(UltrasonicSensor US) {
+    public static double getUltrasonicDistance(UltrasonicSensor US) {
         return US.getDistance();
     }
 
-    public static float getValue() {
-        return  1.0f;
+    public static double getDistance(UltrasonicSensor US) {
+        return US.getDistance();
+    }
+
+    public static boolean isPressed(TouchSensor TS) {
+        return TS.isPressed();
+    }
+
+    public static double getSpeed(NXTRegulatedMotor M) {
+        return M.getSpeed();
+    }
+
+    public static double getAcceleration(NXTRegulatedMotor M) {
+        return M.getAcceleration();
+    }
+
+    public static double getMaxSpeed(NXTRegulatedMotor M) {
+        return M.getMaxSpeed();
     }
 }
