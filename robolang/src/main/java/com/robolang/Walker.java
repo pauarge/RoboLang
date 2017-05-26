@@ -1,6 +1,7 @@
 package com.robolang;
 
 import com.squareup.javapoet.*;
+import lejos.nxt.Button;
 import lejos.nxt.MotorPort;
 import lejos.robotics.navigation.DifferentialPilot;
 import org.antlr.runtime.ANTLRFileStream;
@@ -44,6 +45,10 @@ public class Walker {
         portMap.put("S2", "colorSensor");
         portMap.put("S3", "touchSensor");
         portMap.put("S4", "ultrasonicSensor");
+        portMap.put("BRIGHT", "Button.RIGHT");
+        portMap.put("BESCAPE", "Button.ESCAPE");
+        portMap.put("BLEFT", "Button.LEFT");
+        portMap.put("BENTER", "Button.ENTER");
         this.wheelDiameter = 4.3;
         this.trackWidth = 14.2;
     }
@@ -64,7 +69,7 @@ public class Walker {
         ClassName SoundSensorClass = ClassName.get("lejos.nxt", "SoundSensor");
         ClassName UltrasonicSensorClass = ClassName.get("lejos.nxt", "UltrasonicSensor");
         ClassName DifferentialPilotClass = ClassName.get("lejos.robotics.navigation", "DifferentialPilot");
-
+        ClassName ButtonClass = ClassName.get("lejos.nxt", "Button");
 
         MethodSpec.Builder mainFunc = MethodSpec.methodBuilder("main")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
@@ -88,7 +93,13 @@ public class Walker {
         addField(ColorSensorClass, SensorPortClass, "S2", mainClass, "colorSensor");
         addField(TouchSensorClass, SensorPortClass, "S3", mainClass, "touchSensor2");
         addField(UltrasonicSensorClass, SensorPortClass, "S4", mainClass, "ultrasonicSensor");
-        mainClass.addField(diffPilot);
+
+
+        FieldSpec fieldSpec = FieldSpec.builder(ButtonClass, "button")
+                .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
+                .initializer("Button.ENTER").build();
+
+        mainClass.addField(diffPilot).addField(fieldSpec);
         getChildCode(root, mainFunc);
         mainClass.addMethod(mainFunc.build());
 
@@ -327,6 +338,7 @@ public class Walker {
                     sb.append("(");
                     int n = t.getChild(1).getChildCount();
                     for (int i = 0; i < n; ++i) {
+                        System.out.println(t.getChild(1).getChild(i).getText());
                         sb.append(getNodeCode(t.getChild(1).getChild(i)).toString());
                         if (i != n - 1) sb.append(",");
                     }
@@ -355,7 +367,8 @@ public class Walker {
                     }
                     sb.append(")");
                 }
-                if(!structureChanged)block.add(sb.toString()+";\n");
+                if(!structureChanged)block.add(sb.toString());
+                if(motorChanged) block.add(";\n");
                 if(motorChanged || structureChanged) {
                     block.add("pilot = new DifferentialPilot("+wheelDiameter+","+trackWidth+",rightMotor,leftMotor)");
                 }
@@ -454,6 +467,10 @@ public class Walker {
                     block.addStatement(getNodeCode(instrWhile.getChild(i)).toString());
                 }
                 block.endControlFlow();
+                return block.build();
+
+            case TParser.STRING:
+                block.add(t.getText());
                 return block.build();
 
             default:

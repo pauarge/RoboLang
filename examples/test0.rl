@@ -9,8 +9,10 @@ $S2.setBlackColor();
 $S2.setWhiteColor();*/
 
 
-
-
-a = 2;
+def aaa (){
+ return 2+2;
+}
+prova = aaa();
+a = $S2.getDistance();
 
 

@@ -20,9 +20,9 @@ nxjc ${java_filename} Common.java
 echo "Linking..."
 cd ../../
 nxjlink -o ${nxj_filename} "com.robolang.${classname}"
-#
-#echo "Uploading..."
-##nxjupload -r ${nxj_filename}
+
+echo "Uploading..."
+nxjupload -r ${nxj_filename}
 
 echo "Cleaning up..."
 cd ..
