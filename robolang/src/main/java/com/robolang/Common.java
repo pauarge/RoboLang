@@ -170,10 +170,6 @@ public class Common {
         A.setAcceleration(acc);
     }
 
-    public static boolean touched() {
-        return true;
-    }
-
     public static void beep() {
         Sound.beep();
     }
@@ -192,5 +188,9 @@ public class Common {
 
     public static float getUltrasonicDistance(UltrasonicSensor US) {
         return US.getDistance();
+    }
+
+    public static float getValue() {
+        return  1.0f;
     }
 }
