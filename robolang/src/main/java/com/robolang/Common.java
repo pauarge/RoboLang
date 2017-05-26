@@ -183,4 +183,8 @@ public class Common {
     public static float getUltrasonicDistance(UltrasonicSensor US) {
         return US.getDistance();
     }
+
+    public static float getValue() {
+        return  1.0f;
+    }
 }
