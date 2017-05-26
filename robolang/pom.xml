@@ -15,8 +15,6 @@
             <groupId>lejos</groupId>
             <artifactId>nxt</artifactId>
             <version>0.9.1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/classes.jar</systemPath>
         </dependency>
 
         <dependency>
