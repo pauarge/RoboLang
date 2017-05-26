@@ -116,6 +116,7 @@ atom        :   NUM
             |   array
             |   array_expr
             |   LPAR! expr RPAR!
+            |   dollar
             ;
 
 funcall     :   VAR LPAR expr_list? RPAR -> ^(FUNCALL VAR ^(PARAMS expr_list?)) ;

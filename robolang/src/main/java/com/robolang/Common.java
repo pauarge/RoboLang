@@ -164,10 +164,6 @@ public class Common {
         A.setAcceleration(acc);
     }
 
-    public static boolean touched() {
-        return true;
-    }
-
     public static void beep() {
         Sound.beep();
     }
