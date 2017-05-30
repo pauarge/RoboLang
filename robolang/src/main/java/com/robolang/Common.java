@@ -23,15 +23,11 @@ public class Common {
         pilot.forward();
     }
 
-    public static void forward(NXTRegulatedMotor M) {
-        M.forward();
-    }
-
     public static void stop(DifferentialPilot pilot) {
         pilot.stop();
     }
 
-    public static void stop(NXTRegulatedMotor M) {
+    public static void stop_motor(NXTRegulatedMotor M) {
         M.stop();
     }
 
