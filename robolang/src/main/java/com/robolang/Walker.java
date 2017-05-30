@@ -349,7 +349,7 @@ public class Walker {
                         sb.append(", shootMotor");
                     } else if (funcname.equals("followLine") || funcname.equals("followLine2")) {
                         sb.append("colorSensor, rightMotor, leftMotor");
-                    } else if (funcname.equals("forward") || funcname.equals("backward")){
+                    } else if (funcname.equals("forward") || funcname.equals("backward") || funcname.equals("stop")){
                         sb.append("pilot");
                     } else if (funcname.equals("explore")) {
                         sb.append("pilot,touchSensor,touchSensor2,ultrasonicSensor");
