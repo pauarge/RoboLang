@@ -15,6 +15,10 @@ public class Common {
         System.out.println(val);
     }
 
+    public static void print(boolean val) {
+        System.out.println(val);
+    }
+
     public static void clearDisplay() {
         LCD.clearDisplay();
     }
