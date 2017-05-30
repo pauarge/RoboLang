@@ -2,6 +2,7 @@ package com.robolang;
 
 import lejos.nxt.*;
 import lejos.robotics.navigation.DifferentialPilot;
+import lejos.util.Delay;
 
 
 public class Common {
@@ -253,5 +254,10 @@ public class Common {
 
     public static double getLowValue(ColorSensor CS) {
         return CS.getLow();
+    }
+
+    public static void delay(int microsec) {
+        Delay d = new Delay();
+        d.msDelay(microsec);
     }
 }
