@@ -330,7 +330,6 @@ public class Common {
     }
 
     public static void delay(int microsec) {
-        Delay d = new Delay();
-        d.msDelay(microsec);
+        Delay.msDelay(microsec);
     }
 }
