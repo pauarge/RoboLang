@@ -338,12 +338,11 @@ public class Walker {
                     sb.append("(");
                     int n = t.getChild(1).getChildCount();
                     for (int i = 0; i < n; ++i) {
-                        System.out.println(t.getChild(1).getChild(i).getText());
                         sb.append(getNodeCode(t.getChild(1).getChild(i)).toString());
                         if (i != n - 1) sb.append(",");
                     }
-                    if (funcname.equals("move_back") || funcname.equals("move_front") || funcname.equals("rotate_left")
-                            || funcname.equals("rotate_right")) {
+                    if (funcname.equals("moveBack") || funcname.equals("moveFront") || funcname.equals("rotateLeft")
+                            || funcname.equals("rotateRight")) {
                         sb.append(", pilot");
                     } else if (funcname.equals("shoot")) {
                         sb.append(", shootMotor");
