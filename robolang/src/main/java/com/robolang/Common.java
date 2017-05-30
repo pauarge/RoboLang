@@ -27,11 +27,11 @@ public class Common {
         pilot.stop();
     }
 
-    public static void stop_motor(NXTRegulatedMotor M) {
+    public static void stopMotor(NXTRegulatedMotor M) {
         M.stop();
     }
 
-    public static void move_front(double units, DifferentialPilot pilot) {
+    public static void moveFront(double units, DifferentialPilot pilot) {
         pilot.travel(units);
     }
 
@@ -44,15 +44,15 @@ public class Common {
         else M.backward();
     }
 
-    public static void move_back(double units, DifferentialPilot pilot) {
+    public static void moveBack(double units, DifferentialPilot pilot) {
         pilot.travel(-units);
     }
 
-    public static void rotate_left(int degrees, DifferentialPilot pilot) {
+    public static void rotateLeft(int degrees, DifferentialPilot pilot) {
         pilot.rotate((double) -degrees);
     }
 
-    public static void rotate_right(int degrees, DifferentialPilot pilot) {
+    public static void rotateRight(int degrees, DifferentialPilot pilot) {
         pilot.rotate((double) degrees);
     }
 
@@ -82,7 +82,7 @@ public class Common {
         }
     }
 
-    public static void rotation_move(double units, NXTRegulatedMotor X) {
+    public static void rotationMove(double units, NXTRegulatedMotor X) {
         X.rotate((int) units * 360);
     }
 
@@ -98,7 +98,7 @@ public class Common {
         while (Button.ESCAPE.isUp()) {
             if (T1.isPressed() || T2.isPressed()) {
                 pilot.stop();
-                move_back(10, pilot);
+                moveBack(10, pilot);
                 // TODO: Maybe use getDistances and use average?
                 while (U.getDistance() < 25) pilot.rotate(15);
                 pilot.forward();
@@ -112,7 +112,7 @@ public class Common {
         while(Button.ESCAPE.isUp()){
             if(U.getDistance() < 20){
                 pilot.stop();
-                move_back(10, pilot);
+                moveBack(10, pilot);
                 while (U.getDistance() < 25) pilot.rotate(15);
             }
             pilot.forward();
