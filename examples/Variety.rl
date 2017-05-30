@@ -14,6 +14,7 @@ def recursiveFunc(speed,acc,iteration){
 }
 
 recursiveFunc($A.getSpeed(),20,0);
+stop();
 
 a = 6 + 4;
 b = 10 - a;
