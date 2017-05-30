@@ -66,7 +66,6 @@ public class Walker {
         ClassName SensorPortClass = ClassName.get("lejos.nxt", "SensorPort");
         ClassName TouchSensorClass = ClassName.get("lejos.nxt", "TouchSensor");
         ClassName ColorSensorClass = ClassName.get("lejos.nxt", "ColorSensor");
-        ClassName SoundSensorClass = ClassName.get("lejos.nxt", "SoundSensor");
         ClassName UltrasonicSensorClass = ClassName.get("lejos.nxt", "UltrasonicSensor");
         ClassName DifferentialPilotClass = ClassName.get("lejos.robotics.navigation", "DifferentialPilot");
         ClassName ButtonClass = ClassName.get("lejos.nxt", "Button");
@@ -117,10 +116,6 @@ public class Walker {
         }
     }
 
-    private String generalToOur(String port){
-        return portMap.get(port);
-    }
-
     private CodeBlock getNodeCode(Tree t) {
         CodeBlock.Builder block = CodeBlock.builder();
         CodeBlock c;
@@ -134,17 +129,10 @@ public class Walker {
                 return block.build();
 
             case TParser.ADD:
-                if (t.getChild(0).getType() == TParser.ARRAY || symTable.get(getFunctionName(t) + "_" + t.getChild(0).getText()) == List.class) {
-                    block.add(t.getParent().getChild(0).getText() + ".addAll(" + getNodeCode(t.getChild(1)) + ")");
-                    return block.build();
-                }
                 return genInstrBlock(t, "+");
 
             case TParser.AND:
                 return genInstrBlock(t, "&&");
-
-            case TParser.ARRAY:
-                return null;
 
             case TParser.ASSIGN:
                 assert t.getChild(0).getType() == TParser.VAR;
@@ -155,26 +143,11 @@ public class Walker {
                     firstTime = true;
                     symTable.put(auxName, type);
                 }
-                if (type == List.class) {
-                    if (firstTime) {
-                        block.add("List<String> " + t.getChild(0).getText() + " = ");
-                    } else {
-                        block.add(t.getChild(0).getText() + " = ");
-                    }
-
-                    if (t.getChild(1).getType() == TParser.ARRAY) {
-                        block.add(getNodeCode(t.getChild(1)));
-                    } else {
-                        block.addStatement(getNodeCode(t.getChild(1).getChild(0)).toString());
-                        block.add(getNodeCode(t.getChild(1)));
-                    }
-                } else {
-                    if (firstTime)
-                        block.add(type.toString() + " ");
-                    block.add(t.getChild(0).getText());
-                    block.add("=");
-                    block.add(getNodeCode(t.getChild(1)));
-                }
+                if (firstTime)
+                    block.add(type.toString() + " ");
+                block.add(t.getChild(0).getText());
+                block.add("=");
+                block.add(getNodeCode(t.getChild(1)));
                 return block.build();
 
             case TParser.COND:
@@ -302,13 +275,6 @@ public class Walker {
                             else
                                 portMap.put(port, "colorSensor");
                             break;
-                        case "soundSensor":
-                            sb.append("soundSensor = new SoundSensor(SensorPort." + port + ")");
-                            if(portMap.containsKey(port))
-                                portMap.replace(port, "soundSensor");
-                            else
-                                portMap.put(port, "soundSensor");
-                            break;
                         case "ultrasonicSensor":
                             sb.append("ultrasonicSensor = new UltrasonicSensor(SensorPort." + port + ")");
                             if(portMap.containsKey(port))
@@ -357,12 +323,12 @@ public class Walker {
                     } else if(funcname.equals("getUltrasonicDistance")){
                         sb.append("ultrasonicSensor");
                     } else if(funcname.equals("exploreUltrasonic")){
-                        sb.append("pilot," +
-                                "ultrasonicSensor");
+                        sb.append("pilot," + "ultrasonicSensor");
                     }
-                    if(common && t.getParent().getText().equals("$")){
+                    if(common && t.getParent().getType() == TParser.DOLLAR){
                         if(t.getChild(1).getChildCount() != 0) sb.append(",");
-                        sb.append(portMap.get(t.getParent().getChild(0).getText()));
+                        String portName = t.getParent().getChild(0).getText();
+                        sb.append(portMap.get(portName.substring(1,portName.length())));
                     }
                     sb.append(")");
                 }
@@ -445,7 +411,6 @@ public class Walker {
                 return block.build();
 
             case TParser.SUB:
-                System.out.println(t.getChild(0).getText());
                 if(t.getChildCount() == 1){
                     c = getNodeCode(t.getChild(0));
                     block.add("(-");
@@ -514,7 +479,7 @@ public class Walker {
                 return boolean.class;
 
             case TParser.STRING:
-            case TParser.ARRAY_EXPR:
+            case TParser.PORT:
                 return String.class;
 
             case TParser.NUM:
@@ -532,9 +497,6 @@ public class Walker {
                     }
                 }
                 return symTable.get(func + "_" + t0.getText());
-
-            case TParser.ARRAY:
-                return List.class;
 
             case TParser.FUNCALL:
                 return symTable.get("def_" + t0.getChild(0).getText());

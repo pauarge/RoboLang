@@ -44,14 +44,13 @@ LCOR    :   '[';
 RCOR    :   ']';
 LBRA    :   '{';
 RBRA    :   '}';
-DOLLAR  :   '$';
 COMMA   :   ',';
 DOT     :   '.';
 TRUE    :   'true';
 FALSE   :   'false';
 NUM     :   ('0'..'9')+ ('.' ('0'..'9')+)?;
-PORT    :   'A' | 'B' | 'C' | 'BRIGHT' | 'BLEFT' | 'BENTER' | 'BESCAPE' | 'S1' | 'S2' | 'S3' | 'S4';
-VAR     :   ('a'..'z') ('0'..'9' | 'a'..'z' | 'A'..'Z' | '_')* ;
+PORT    :   '$' ('A' | 'B' | 'C' | 'BRIGHT' | 'BLEFT' | 'BENTER' | 'BESCAPE' | 'S1' | 'S2' | 'S3' | 'S4');
+VAR     :   ('a'..'z' | 'A'..'Z') ('0'..'9' | 'a'..'z' | 'A'..'Z' | '_')* ;
 SEMI    :   ';';
 
 // C-style comments

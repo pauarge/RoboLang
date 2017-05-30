@@ -34,9 +34,8 @@ tokens {
     PARAMS;
     COND;
     PREF;
-    ARRAY;
     PVALUE;
-    ARRAY_EXPR;
+    DOLLAR;
 }
 
 // What package should the generated source exist in?
@@ -54,24 +53,15 @@ instr       :   loop
             |   assign SEMI!
             |   func
             |   funcall SEMI!
-            |   forst
             |   dollar SEMI!
             |   importst SEMI!
             ;
 
 importst    :   IMPORT^ VAR ;
 
-dollar      :   DOLLAR^ PORT DOT! funcall;
+dollar      :   PORT DOT funcall -> ^(DOLLAR PORT funcall);
 
-assign      :   ident ASSIGN expr -> ^(ASSIGN ident expr);
-
-array_expr  :   VAR LCOR expr RCOR -> ^(ARRAY_EXPR VAR expr);
-
-array       :   LCOR array2 RCOR -> ^(ARRAY array2);
-
-array2      :   atom (COMMA! atom)* ;
-
-ident       :   (VAR^ | array_expr) ;
+assign      :   VAR ASSIGN expr -> ^(ASSIGN VAR expr);
 
 func        :   DEF VAR LPAR params RPAR LBRA list_instr? ret? RBRA -> ^(FUNCTION VAR params ^(LIST_INSTR list_instr)? ret?) ;
 
@@ -90,10 +80,6 @@ ifst        :   IF LPAR expr RPAR LBRA list_instr RBRA -> ^(IF expr ^(LIST_INSTR
 elifst      :   ELIF LPAR expr RPAR LBRA list_instr RBRA -> ^(ELIF expr ^(LIST_INSTR list_instr));
 
 elsest      :   ELSE LBRA list_instr RBRA -> ^(ELSE ^(LIST_INSTR list_instr));
-
-forst       :   FOR LPAR VAR IN forst2 RPAR LBRA list_instr RBRA -> ^(FOR VAR forst2 ^(LIST_INSTR list_instr));
-
-forst2      :   array | VAR;
             
 loop        :   WHILE LPAR expr RPAR LBRA list_instr RBRA -> ^(WHILE expr ^(LIST_INSTR list_instr));
 
@@ -113,8 +99,6 @@ atom        :   NUM
             |   STRING
             |   VAR
             |   funcall
-            |   array
-            |   array_expr
             |   LPAR! expr RPAR!
             |   dollar
             ;
