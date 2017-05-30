@@ -124,7 +124,9 @@ public class Common {
         pilot.stop();
     }
 
+
     public static void followLine(ColorSensor L, NXTRegulatedMotor A, NXTRegulatedMotor B) {
+
         LCD.clearDisplay();
         System.out.println("Calibrate black value");
         System.out.println("Press ENTER to set value");
@@ -140,23 +142,94 @@ public class Common {
         System.out.println(L.getHigh());
         waitForPress();
         LCD.clearDisplay();
-        A.setAcceleration(A.getAcceleration()/4);
-        B.setAcceleration(B.getAcceleration()/4);
-        B.setSpeed(B.getSpeed()/2);
-        A.setSpeed(A.getSpeed()/2);
+        A.setAcceleration(A.getAcceleration()/5);
+        B.setAcceleration(B.getAcceleration()/5);
+        B.setSpeed(B.getSpeed()/3);
+        A.setSpeed(A.getSpeed()/3);
+        DifferentialPilot pilot = new DifferentialPilot(4.3f, 13.7f,A,B);
+
         while (Button.ESCAPE.isUp()) {
-            if(L.getNormalizedLightValue() < L.getHigh()-10) {
+            if((L.getNormalizedLightValue() + 70> L.getHigh() && L.getNormalizedLightValue() -70 < L.getHigh())) {
                 B.stop();
-                A.forward(); //Right
+                A.rotate(20);
+               // print("WHITE: ");
             }
             else{
-                A.stop();
-                B.forward();
+                //print("BLACK: ");
+                A.stop(); //Right
+                B.rotate(20);
             }
         }
     }
 
+
+    public static void followLine2(ColorSensor L, NXTRegulatedMotor A, NXTRegulatedMotor B) {
+
+        LCD.clearDisplay();
+        System.out.println("Calibrate black value");
+        System.out.println("Press ENTER to set value");
+        waitToBePressed(Button.ID_ENTER);
+        L.setLow(L.getNormalizedLightValue());
+        System.out.println(L.getLow());
+        waitForPress();
+        LCD.clearDisplay();
+        System.out.println("Calibrate white value");
+        System.out.println("Press ENTER to set value");
+        waitToBePressed(Button.ID_ENTER);
+        L.setHigh(L.getNormalizedLightValue());
+        System.out.println(L.getHigh());
+        waitForPress();
+        LCD.clearDisplay();
+        A.setAcceleration(A.getAcceleration()/5);
+        B.setAcceleration(B.getAcceleration()/5);
+        B.setSpeed(B.getSpeed()/3);
+        A.setSpeed(A.getSpeed()/3);
+        DifferentialPilot pilot = new DifferentialPilot(4.3f, 13.7f,A,B);
+
+        while(Button.ESCAPE.isUp()){
+
+            if(L.getNormalizedLightValue() + 40 > L.getLow() && L.getNormalizedLightValue() - 40 < L.getLow()){
+                pilot.forward();
+            }
+            else{
+                pilot.stop();
+                findLine(L,pilot);
+            }
+        }
+    }
+
+    private static void findLine(ColorSensor L, DifferentialPilot pilot) {
+
+        boolean found = false;
+        int i = 4;
+        int k = 0;
+        Delay d = new Delay();
+        while(!found && Button.ESCAPE.isUp()){
+         //   if(k % 2 == 0)
+                pilot.rotate(i);
+          //  else  pilot.rotate(i*2);
+            d.msDelay(200);
+            found = ((L.getNormalizedLightValue() + 40 > L.getLow()) && (L.getNormalizedLightValue() - 40 < L.getLow()));
+            d.msDelay(200);
+            if(found) break;
+            else {
+     //           if(k % 2 == 0)
+                    pilot.rotate(-i*2);
+       //         else pilot.rotate(-i);
+            }
+            d.msDelay(200);
+            found = ((L.getNormalizedLightValue() + 40 > L.getLow()) && (L.getNormalizedLightValue() - 40 < L.getLow()));
+            d.msDelay(200);
+            if(found) break;
+            pilot.rotate(i);
+            i = i + 3;
+            k = k+1;
+        }
+    }
+
+
     public static void shoot(int balls, NXTRegulatedMotor C) {
+
         C.setSpeed(C.getMaxSpeed());
         for (int i = 0; i < balls; ++i) {
             C.rotate(360);

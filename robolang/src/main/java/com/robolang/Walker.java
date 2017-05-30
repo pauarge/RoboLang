@@ -78,7 +78,7 @@ public class Walker {
 
         FieldSpec diffPilot = FieldSpec.builder(DifferentialPilotClass, "pilot")
                 .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
-                .initializer("new $T(4.3f, 14.2f,rightMotor,leftMotor)", DifferentialPilotClass).build();
+                .initializer("new $T(4.3f, 14.3f,rightMotor,leftMotor)", DifferentialPilotClass).build();
 
 
         mainClass = TypeSpec.classBuilder(className)
@@ -347,7 +347,7 @@ public class Walker {
                         sb.append(", pilot");
                     } else if (funcname.equals("shoot")) {
                         sb.append(", shootMotor");
-                    } else if (funcname.equals("followLine")) {
+                    } else if (funcname.equals("followLine") || funcname.equals("followLine2")) {
                         sb.append("colorSensor, rightMotor, leftMotor");
                     } else if (funcname.equals("forward") || funcname.equals("backward")){
                         sb.append("pilot");
@@ -400,7 +400,7 @@ public class Walker {
             case TParser.GT:
                 return genInstrBlock(t, ">");
 
-            /*case TParser.IMPORT:
+            case TParser.IMPORT:
                 TLexer lexer = new TLexer();
                 try {
                     String fileName = path + t.getChild(0).getText() + ".rl";
@@ -416,7 +416,7 @@ public class Walker {
                 } catch (IOException ex) {
                     System.err.println("Could not import specified file.");
                 }
-                return null;*/
+                return null;
 
             case TParser.LET:
                 return genInstrBlock(t, "<=");
