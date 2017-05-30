@@ -86,11 +86,15 @@ public class Common {
         X.rotate((int) units * 360);
     }
 
-    public static void waitToBePressed(int id) {
+    private static void waitButton(int id) {
         Button B = getButton(id);
         B.waitForPressAndRelease();
 
         TouchSensor ts = new TouchSensor(SensorPort.S1);
+    }
+
+    public static void waitToBePressed(Button b) {
+        b.waitForPress();
     }
 
     public static void explore(DifferentialPilot pilot, TouchSensor T1, TouchSensor T2, UltrasonicSensor U) {
@@ -126,14 +130,14 @@ public class Common {
         LCD.clearDisplay();
         System.out.println("Calibrate black value");
         System.out.println("Press ENTER to set value");
-        waitToBePressed(Button.ID_ENTER);
+        waitButton(Button.ID_ENTER);
         L.setLow(L.getNormalizedLightValue());
         System.out.println(L.getLow());
         waitForPress();
         LCD.clearDisplay();
         System.out.println("Calibrate white value");
         System.out.println("Press ENTER to set value");
-        waitToBePressed(Button.ID_ENTER);
+        waitButton(Button.ID_ENTER);
         L.setHigh(L.getNormalizedLightValue());
         System.out.println(L.getHigh());
         waitForPress();
@@ -164,14 +168,14 @@ public class Common {
         LCD.clearDisplay();
         System.out.println("Calibrate black value");
         System.out.println("Press ENTER to set value");
-        waitToBePressed(Button.ID_ENTER);
+        waitButton(Button.ID_ENTER);
         L.setLow(L.getNormalizedLightValue());
         System.out.println(L.getLow());
         waitForPress();
         LCD.clearDisplay();
         System.out.println("Calibrate white value");
         System.out.println("Press ENTER to set value");
-        waitToBePressed(Button.ID_ENTER);
+        waitButton(Button.ID_ENTER);
         L.setHigh(L.getNormalizedLightValue());
         System.out.println(L.getHigh());
         waitForPress();
@@ -274,10 +278,6 @@ public class Common {
 
     public static void buzz() {
         Sound.buzz();
-    }
-
-    public static double getUltrasonicDistance(UltrasonicSensor US) {
-        return US.getDistance();
     }
 
     public static double getDistance(UltrasonicSensor US) {
