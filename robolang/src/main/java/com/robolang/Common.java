@@ -199,23 +199,22 @@ public class Common {
         boolean found = false;
         int i = 4;
         int k = 0;
-        Delay d = new Delay();
         while(!found && Button.ESCAPE.isUp()){
          //   if(k % 2 == 0)
                 pilot.rotate(i);
           //  else  pilot.rotate(i*2);
-            d.msDelay(200);
+            Delay.msDelay(200);
             found = ((L.getNormalizedLightValue() + 40 > L.getLow()) && (L.getNormalizedLightValue() - 40 < L.getLow()));
-            d.msDelay(200);
+            Delay.msDelay(200);
             if(found) break;
             else {
      //           if(k % 2 == 0)
                     pilot.rotate(-i*2);
        //         else pilot.rotate(-i);
             }
-            d.msDelay(200);
+            Delay.msDelay(200);
             found = ((L.getNormalizedLightValue() + 40 > L.getLow()) && (L.getNormalizedLightValue() - 40 < L.getLow()));
-            d.msDelay(200);
+            Delay.msDelay(200);
             if(found) break;
             pilot.rotate(i);
             i = i + 3;
