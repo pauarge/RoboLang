@@ -5,7 +5,7 @@ def moveNoCrash(){
             stop();
             moveBack(10);
             while($S4.getDistance() < 25){
-                rotate(15);
+                rotateRight(15);
             }
             forward();
         }
@@ -20,7 +20,7 @@ def setSpeedAndAcceleration(speed, acceleration){
 
 s = 100;
 a = $A.getAcceleration()/8;
-setSpeed(s,a);
+setSpeedAndAcceleration(s,a);
 i = 0;
 while(i < 4){
     moveFront(50);

@@ -20,11 +20,11 @@ def follow(){
 
     while(not($BESCAPE.isPressed())){
         if(($S2.getColor() + 70> $S2.getHighValue() and $S2.getColor() -70 < $S2.getHighValue())){
-            $B.stop();
+            $B.stopMotor();
             $A.move(true);
         }
         else {
-            $A.stop();
+            $A.stopMotor();
             $B.move(true);
         }
     }
