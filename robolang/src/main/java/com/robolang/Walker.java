@@ -1,9 +1,6 @@
 package com.robolang;
 
 import com.squareup.javapoet.*;
-import lejos.nxt.Button;
-import lejos.nxt.MotorPort;
-import lejos.robotics.navigation.DifferentialPilot;
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
@@ -14,7 +11,6 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
