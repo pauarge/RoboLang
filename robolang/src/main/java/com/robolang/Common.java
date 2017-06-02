@@ -44,7 +44,7 @@ public class Common {
     }
 
     public static void move(boolean forward, NXTRegulatedMotor M) {
-        if(forward) M.forward();
+        if (forward) M.forward();
         else M.backward();
     }
 
@@ -115,10 +115,10 @@ public class Common {
         pilot.stop();
     }
 
-    public static void exploreUltrasonic(DifferentialPilot pilot, UltrasonicSensor U){
+    public static void exploreUltrasonic(DifferentialPilot pilot, UltrasonicSensor U) {
         pilot.forward();
-        while(Button.ESCAPE.isUp()){
-            if(U.getDistance() < 20){
+        while (Button.ESCAPE.isUp()) {
+            if (U.getDistance() < 20) {
                 pilot.stop();
                 moveBack(10, pilot);
                 while (U.getDistance() < 25) pilot.rotate(15);
@@ -146,19 +146,18 @@ public class Common {
         System.out.println(L.getHigh());
         waitForPress();
         LCD.clearDisplay();
-        A.setAcceleration(A.getAcceleration()/5);
-        B.setAcceleration(B.getAcceleration()/5);
-        B.setSpeed(B.getSpeed()/3);
-        A.setSpeed(A.getSpeed()/3);
-        DifferentialPilot pilot = new DifferentialPilot(4.3f, 13.7f,A,B);
+        A.setAcceleration(A.getAcceleration() / 5);
+        B.setAcceleration(B.getAcceleration() / 5);
+        B.setSpeed(B.getSpeed() / 3);
+        A.setSpeed(A.getSpeed() / 3);
+        DifferentialPilot pilot = new DifferentialPilot(4.3f, 13.7f, A, B);
 
         while (Button.ESCAPE.isUp()) {
-            if((L.getNormalizedLightValue() + 70> L.getHigh() && L.getNormalizedLightValue() -70 < L.getHigh())) {
+            if ((L.getNormalizedLightValue() + 70 > L.getHigh() && L.getNormalizedLightValue() - 70 < L.getHigh())) {
                 B.stop();
                 A.rotate(20);
-               // print("WHITE: ");
-            }
-            else{
+                // print("WHITE: ");
+            } else {
                 //print("BLACK: ");
                 A.stop(); //Right
                 B.rotate(20);
@@ -184,20 +183,19 @@ public class Common {
         System.out.println(L.getHigh());
         waitForPress();
         LCD.clearDisplay();
-        A.setAcceleration(A.getAcceleration()/5);
-        B.setAcceleration(B.getAcceleration()/5);
-        B.setSpeed(B.getSpeed()/3);
-        A.setSpeed(A.getSpeed()/3);
-        DifferentialPilot pilot = new DifferentialPilot(4.3f, 13.7f,A,B);
+        A.setAcceleration(A.getAcceleration() / 5);
+        B.setAcceleration(B.getAcceleration() / 5);
+        B.setSpeed(B.getSpeed() / 3);
+        A.setSpeed(A.getSpeed() / 3);
+        DifferentialPilot pilot = new DifferentialPilot(4.3f, 13.7f, A, B);
 
-        while(Button.ESCAPE.isUp()){
+        while (Button.ESCAPE.isUp()) {
 
-            if(L.getNormalizedLightValue() + 40 > L.getLow() && L.getNormalizedLightValue() - 40 < L.getLow()){
+            if (L.getNormalizedLightValue() + 40 > L.getLow() && L.getNormalizedLightValue() - 40 < L.getLow()) {
                 pilot.forward();
-            }
-            else{
+            } else {
                 pilot.stop();
-                findLine(L,pilot);
+                findLine(L, pilot);
             }
         }
     }
@@ -207,26 +205,26 @@ public class Common {
         boolean found = false;
         int i = 4;
         int k = 0;
-        while(!found && Button.ESCAPE.isUp()){
-         //   if(k % 2 == 0)
-                pilot.rotate(i);
-          //  else  pilot.rotate(i*2);
+        while (!found && Button.ESCAPE.isUp()) {
+            //   if(k % 2 == 0)
+            pilot.rotate(i);
+            //  else  pilot.rotate(i*2);
             Delay.msDelay(200);
             found = ((L.getNormalizedLightValue() + 40 > L.getLow()) && (L.getNormalizedLightValue() - 40 < L.getLow()));
             Delay.msDelay(200);
-            if(found) break;
+            if (found) break;
             else {
-     //           if(k % 2 == 0)
-                    pilot.rotate(-i*2);
-       //         else pilot.rotate(-i);
+                //           if(k % 2 == 0)
+                pilot.rotate(-i * 2);
+                //         else pilot.rotate(-i);
             }
             Delay.msDelay(200);
             found = ((L.getNormalizedLightValue() + 40 > L.getLow()) && (L.getNormalizedLightValue() - 40 < L.getLow()));
             Delay.msDelay(200);
-            if(found) break;
+            if (found) break;
             pilot.rotate(i);
             i = i + 3;
-            k = k+1;
+            k = k + 1;
         }
     }
 

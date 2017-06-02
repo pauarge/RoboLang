@@ -1,18 +1,12 @@
 lexer grammar TLexer;
 
 options {
-   language=Java;  // Default
+   language=Java;
 }
 
-// What package should the generated source exist in?
-//
 @header {
-
     package com.robolang;
 }
-
-// This is just a simple lexer that matches the usual suspects
-//
 
 ASSIGN  :   '=';
 FOR     :   'for';
